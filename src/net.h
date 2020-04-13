@@ -1,4 +1,9 @@
 
+
+
+#ifndef _APP_NET_H_
+#define _APP_NET_H_
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -21,3 +26,5 @@ bool writeAuthorisation(void);
 bool writeConfig(void);
 bool writePing(void);
 gboolean network_tick(void);
+
+#endif

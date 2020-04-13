@@ -11,6 +11,7 @@ int main (int argc, char **argv)
 
 	setDefaultSettings();
 	net_init();
+	ambeclient_init();
 
 	//g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
 	GError * error = NULL;

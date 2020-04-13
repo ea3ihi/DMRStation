@@ -13,5 +13,9 @@
 #include <stdbool.h>
 #include <openssl/sha.h>
 
+#include "dmr.h"
 #include "net.h"
 #include "config.h"
+#include "fw_mbelib.h"
+#include "audio.h"
+#include "ambe_client.h"

@@ -5,7 +5,7 @@
 static const int SETTINGS_MAGIC_NUMBER 		= 0x4744;
 
 
-settingsStruct_t settings;
+AppSettingsStruct_t settings;
 
 
 void setDefaultSettings(void)
@@ -17,4 +17,7 @@ void setDefaultSettings(void)
 	strcpy((char *) settings.remoteHost, (char *) "192.168.3.254");
 	strcpy((char *) settings.password, (char *) "passw0rd");
 	strcpy((char *) settings.callsign, (char *) "EA3IHI");
+
+	strcpy((char *) settings.ambeServerHost, (char *) "127.0.0.1");
+	settings.ambeServerPort = 2460;
 }

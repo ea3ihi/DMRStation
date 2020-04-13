@@ -21,15 +21,15 @@ uint32_t ticks;
 
 enum DMR_STATUS dmr_status = WAITING_CONNECT;
 
-extern settingsStruct_t settings;
+extern AppSettingsStruct_t settings;
 
 void net_init(void)
 {
 	GInetAddress *address = g_inet_address_new_from_string((gchar *) settings.remoteHost);
-	GSocketAddress *socket_address = g_inet_socket_address_new(address, 62031);
+	GSocketAddress *socket_address = g_inet_socket_address_new(address, settings.remotePort);
 
 	GInetAddress *localAddress = g_inet_address_new_any(G_SOCKET_FAMILY_IPV4) ;
-	GSocketAddress *localSocketAddress = g_inet_socket_address_new(localAddress, 62031);
+	GSocketAddress *localSocketAddress = g_inet_socket_address_new(localAddress, settings.remotePort);
 
 	GError *error = NULL;
 
@@ -109,19 +109,26 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 								//is it a voice packet?
 								uint8_t frameType = (RxData[15] & 0x30) >> 4;
 								uint8_t dataType = RxData[15] & 0x0F;
-								if (frameType == 0)
+								if (frameType == VOICE)
 								{
 
-									//processDMRVoiceFrame(RxData + 20);
+									processDMRVoiceFrame(RxData + 20);
 
 									return TRUE;
 								}
 								else
 								{
-									if (frameType == 2 && dataType == 2)
+									if (frameType == DATA_SYNC)
 									{
-										//audio end
-										return TRUE;
+										if (dataType == VOICE_HEADER)
+										{
+											//audio start
+											return TRUE;
+										} else if (dataType == VOICE_TERMINATOR)
+										{
+											//audio end
+											return TRUE;
+										}
 									}
 								}
 							}
