@@ -111,9 +111,9 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 								uint8_t dataType = RxData[15] & 0x0F;
 								if (frameType == 0)
 								{
-									//taskENTER_CRITICAL();
+
 									//processDMRVoiceFrame(RxData + 20);
-									//taskEXIT_CRITICAL();
+
 									return TRUE;
 								}
 								else
