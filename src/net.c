@@ -127,6 +127,7 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 										} else if (dataType == VOICE_TERMINATOR)
 										{
 											//audio end
+											audio_stop();
 											return TRUE;
 										}
 									}

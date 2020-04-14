@@ -1,6 +1,6 @@
 
-#define AUDIO_BUFFERS	32
-#define AUDIO_BUFFER_SIZE	320
+#define AUDIO_BUFFERS	40
+#define AUDIO_BUFFER_SIZE	160
 
 void audio_init(void);
 void audio_tick(void);

@@ -45,6 +45,10 @@ gboolean ambeInCallback(GSocket *source, GIOCondition condition, gpointer data)
 			if (dataLen == 320)
 			{
 				//PCM data
+				uint16_t * buffer = audio_get_buffer();
+
+				memcpy(buffer, (gchar*) RxData, dataLen);
+				audio_advance_buffer();
 				return TRUE;
 			} else if (dataLen == 7){
 				//ambe data
