@@ -15,7 +15,9 @@ void setDefaultSettings(void)
 	settings.repeaterId = 214381466;
 	settings.remotePort = 62031;
 
-	strcpy((char *) settings.remoteHost, (char *) "192.168.3.254");
+	//strcpy((char *) settings.remoteHost, (char *) "192.168.3.254");
+	strcpy((char *) settings.remoteHost, (char *) "87.98.228.225");
+
 	strcpy((char *) settings.password, (char *) "passw0rd");
 	strcpy((char *) settings.callsign, (char *) "EA3IHI");
 

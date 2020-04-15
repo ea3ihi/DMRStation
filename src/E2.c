@@ -27,7 +27,7 @@ int main (int argc, char **argv)
 	ambeclient_init();
 	audio_init();
 
-	activateTG(2143827, 21463);
+	//activateTG(2143827, 21463);
 
 	//g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
 	GError * error = NULL;

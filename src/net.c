@@ -14,8 +14,8 @@ uint8_t TxData [400];
 uint8_t RxData [55];
 
 #define PING_TICKS 5
-#define PONG_TICKS 15
-#define RECONNECT_TICKS 5
+#define PONG_TICKS 25
+#define RECONNECT_TICKS 15
 
 uint16_t timerPing;
 uint16_t timeoutPong;
@@ -24,7 +24,7 @@ uint16_t timeout_reconnect;
 uint32_t salt;
 uint32_t ticks;
 
-enum DMR_STATUS dmr_status = WAITING_CONNECT;
+volatile enum DMR_STATUS dmr_status = WAITING_CONNECT;
 
 extern AppSettingsStruct_t settings;
 
@@ -100,6 +100,9 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 										case WAITING_CONFIG:
 											dmr_status = RUNNING;
 											ui_net_connection(RUNNING);
+
+											activateTG(settings.dmrId, 21460);
+
 											break;
 										default:
 											break;
@@ -216,7 +219,7 @@ bool network_send(uint8_t * data, unsigned int length)
 bool writePing(void)
 {
 	memcpy(TxData + 0U, "RPTPING", 7U);
-	uint8_t *p = (uint8_t *) &settings.dmrId;
+	uint8_t *p = (uint8_t *) &settings.repeaterId;
 	TxData[7] = (uint8_t) p[3];
 	TxData[8] = (uint8_t) p[2];
 	TxData[9] = (uint8_t) p[1];
@@ -234,7 +237,7 @@ bool writeConfig(void)
 
 	memcpy(buffer + 0U, "RPTC", 4U);
 
-	uint8_t *p = (uint8_t *) &settings.dmrId;
+	uint8_t *p = (uint8_t *) &settings.repeaterId;
 	buffer[4] = (uint8_t) p[3];
 	buffer[5] = (uint8_t) p[2];
 	buffer[6] = (uint8_t) p[1];
@@ -251,7 +254,7 @@ bool writeConfig(void)
 		settings.callsign,
 		449000000, 444000000, power,
 		1, latitude, longitude, height, "Earth",
-		"stm32 X", slots, "github.com/ea3ihi", "20200316", software);
+		"OPENDMR", slots, "github.com/ea3ihi", "20200316", software);
 
 	return network_send(buffer, 302U);
 }
@@ -271,7 +274,7 @@ bool writeAuthorisation(void)
 
 
 	memcpy(out + 0U, "RPTK", 4U);
-	uint8_t *p = (uint8_t *) &settings.dmrId;
+	uint8_t *p = (uint8_t *) &settings.repeaterId;
 	out[4] = (uint8_t) p[3];
 	out[5] = (uint8_t) p[2];
 	out[6] = (uint8_t) p[1];
@@ -290,7 +293,7 @@ bool writeAuthorisation(void)
 bool writeLogin(void)
 {
 	memcpy(TxData + 0U, "RPTL", 4U);
-	uint8_t *p = (uint8_t *) &settings.dmrId;
+	uint8_t *p = (uint8_t *) &settings.repeaterId;
 
 	TxData[4] = (uint8_t) p[3];
 	TxData[5] = (uint8_t) p[2];
@@ -303,7 +306,21 @@ bool writeLogin(void)
 
 
 
-void activateTG(uint32_t src, uint32_t dst)
+void activateTG(uint32_t src, uint32_t dst){
+
+	uint8_t dmrData[53] = {0};
+
+	//send VOICE HEADER
+	createVoiceHeader(src, dst, dmrData);
+	network_send(dmrData, 53);
+
+	//send VOICE TERMINATOR
+	createVoiceTerminator(src, dst, dmrData);
+	dmrData[4] = 2; //seq
+	network_send(dmrData, 53);
+}
+
+void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut)
 {
 	uint8_t dmrData[53] = {0};
 	uint8_t *p;
@@ -322,7 +339,7 @@ void activateTG(uint32_t src, uint32_t dst)
 	dmrData[7]= (uint8_t) p[0];
 
 	//dst
-	p = (uint8_t *) &src;
+	p = (uint8_t *) &dst;
 	dmrData[8]= (uint8_t) p[2];
 	dmrData[9]= (uint8_t) p[1];
 	dmrData[10]= (uint8_t) p[0];
@@ -335,7 +352,7 @@ void activateTG(uint32_t src, uint32_t dst)
 	dmrData[14]= (uint8_t) p[0];
 
 	//bit fields
-	dmrData[15]= 0b00011000; //data2 frame 2 group call slot 0
+	dmrData[15]= 0xA1; //data2 frame 2 group call slot 0 voice header
 
 	//StreamId
 	uint32_t streamId = src+dst;
@@ -364,9 +381,72 @@ void activateTG(uint32_t src, uint32_t dst)
 		dmrData[i + 20+ 12U] = (dmrData[i + 20 + 12U] & ~LC_SYNC_MASK_FULL[i]) | VOICE_LC_SYNC_FULL[i];
 	}
 
-	//send VOICE HEADER
+	memcpy(dataOut, dmrData, 53);
 
-	//send VOICE TERMINATOR
+}
+
+void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut)
+{
+	uint8_t dmrData[53] = {0};
+	uint8_t *p;
+
+	dmrData[0] = 'D';
+	dmrData[1] = 'M';
+	dmrData[2] = 'R';
+	dmrData[3] = 'D';
+
+	dmrData[4] = 0x01; //seq
+
+	//src
+	p = (uint8_t *) &src;
+	dmrData[5]= (uint8_t) p[2];
+	dmrData[6]= (uint8_t) p[1];
+	dmrData[7]= (uint8_t) p[0];
+
+	//dst
+	p = (uint8_t *) &dst;
+	dmrData[8]= (uint8_t) p[2];
+	dmrData[9]= (uint8_t) p[1];
+	dmrData[10]= (uint8_t) p[0];
+
+	//repeaterid
+	p = (uint8_t *) &settings.repeaterId;
+	dmrData[11]= (uint8_t) p[3];
+	dmrData[12]= (uint8_t) p[2];
+	dmrData[13]= (uint8_t) p[1];
+	dmrData[14]= (uint8_t) p[0];
+
+	//bit fields
+	dmrData[15]= 0xA2; //data2 frame 2 group call slot 0 voice terminator
+
+	//StreamId
+	uint32_t streamId = src+dst;
+	dmrData[16]= (streamId >> 24) & 0xFF;
+	dmrData[17]= (streamId >> 16) & 0xFF;
+	dmrData[18]= (streamId >> 8) & 0xFF;
+	dmrData[19]= (streamId >> 0) & 0xFF;
+
+	//LC data
+	DMRLC_T lc;
+
+	memset(&lc, 0, sizeof(DMRLC_T));// clear automatic variable
+
+	lc.srcId = src;
+	lc.dstId = dst;
+	lc.FLCO = 0;// Private or group call
+
+	// Encode the src and dst Ids etc
+	if (!DMRFullLC_encode(&lc, &dmrData[20], DT_TERMINATOR_WITH_LC)) // Encode the src and dst Ids etc
+	{
+		return;
+	}
+
+	for (uint8_t i = 0U; i < 8U; i++)
+	{
+		dmrData[i + 20+ 12U] = (dmrData[i + 20 + 12U] & ~LC_SYNC_MASK_FULL[i]) | TERMINATOR_LC_SYNC_FULL[i];
+	}
+
+	memcpy(dataOut, dmrData, 53);
 
 }
 

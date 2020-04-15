@@ -176,7 +176,7 @@ static void stream_underflow_cb(pa_stream *s, void *userdata) {
   }
 }
 
-static void context_state_callback(pa_context *c, void *userdata) {
+void context_state_callback(pa_context *c, void *userdata) {
 	  pa_context_state_t state;
 	  int *pa_ready = userdata;
 	  state = pa_context_get_state(c);

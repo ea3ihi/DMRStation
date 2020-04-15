@@ -27,5 +27,8 @@ bool writeConfig(void);
 bool writePing(void);
 gboolean network_tick(void);
 void activateTG(uint32_t src, uint32_t dst);
+void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut);
+void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut);
+
 
 #endif
