@@ -58,6 +58,8 @@ int main (int argc, char **argv)
 
 	gtk_main();
 
+	audio_deinit();
+
 	return 0;
 
 
