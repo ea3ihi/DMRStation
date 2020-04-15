@@ -17,6 +17,10 @@ int main (int argc, char **argv)
 
 	gtk_init(&argc, &argv);
 
+	g_set_application_name("OpenDMR network radio");
+	gtk_window_set_default_icon_name("DMR");
+	g_setenv("PULSE_PROP_media.role", "phone", TRUE);
+
 
 	setDefaultSettings();
 
