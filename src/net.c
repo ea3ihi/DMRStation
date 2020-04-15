@@ -2,6 +2,11 @@
 
 #include "main.h"
 
+#include "dmr/DMRLC.h"
+#include "dmr/DMRFullLC.h"
+#include "dmr/DMRShortLC.h"
+#include "dmr/DMRSlotType.h"
+#include "dmr/QR1676.h"
 
 GSocket *socket;
 
@@ -22,6 +27,10 @@ uint32_t ticks;
 enum DMR_STATUS dmr_status = WAITING_CONNECT;
 
 extern AppSettingsStruct_t settings;
+
+static const uint8_t VOICE_LC_SYNC_FULL[]       = { 0x04U, 0x6DU, 0x5DU, 0x7FU, 0x77U, 0xFDU, 0x75U, 0x7EU, 0x30U };
+static const uint8_t TERMINATOR_LC_SYNC_FULL[]  = { 0x04U, 0xADU, 0x5DU, 0x7FU, 0x77U, 0xFDU, 0x75U, 0x79U, 0x60U };
+static const uint8_t LC_SYNC_MASK_FULL[]        = { 0x0FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xF0U };
 
 void net_init(void)
 {
@@ -48,6 +57,7 @@ void net_init(void)
 	//g_socket_send (socket, "RPTL123456", 10, NULL, NULL);
 
 	writeLogin();
+
 }
 
 void reconnect(void)
@@ -80,13 +90,16 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 											memcpy((uint8_t *) &salt, RxData + 6U, sizeof(uint32_t));
 											writeAuthorisation();
 											dmr_status = WAITING_AUTHORISATION;
+											ui_net_connection(WAITING_AUTHORISATION);
 											break;
 										case WAITING_AUTHORISATION:
 											writeConfig();
 											dmr_status = WAITING_CONFIG;
+											ui_net_connection(WAITING_CONFIG);
 											break;
 										case WAITING_CONFIG:
 											dmr_status = RUNNING;
+											ui_net_connection(RUNNING);
 											break;
 										default:
 											break;
@@ -101,6 +114,7 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 						} else if (memcmp(RxData, "MSTNAK",  6U) == 0) {
 							//NACK
 							dmr_status = WAITING_LOGIN;
+							ui_net_connection(WAITING_LOGIN);
 						} else if (memcmp(RxData, "DMRD",  4U) == 0) {
 							//DMR Packet
 							//do we have a complete packet
@@ -123,11 +137,21 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 										if (dataType == VOICE_HEADER)
 										{
 											//audio start
+											uint32_t src = (RxData[5U] << 16) | (RxData[6U] << 8) | (RxData[7U] << 0);
+											uint32_t dst = (RxData[8U] << 16) | (RxData[9U] << 8) | (RxData[10U] << 0);
+
+											ui_dmr_start(src, dst, 1);
+
 											return TRUE;
 										} else if (dataType == VOICE_TERMINATOR)
 										{
 											//audio end
 											audio_stop();
+											//audio start
+											uint32_t src = (RxData[5U] << 16) | (RxData[6U] << 8) | (RxData[7U] << 0);
+											uint32_t dst = (RxData[8U] << 16) | (RxData[9U] << 8) | (RxData[10U] << 0);
+
+											ui_dmr_stop(src, dst, 1);
 											return TRUE;
 										}
 									}
@@ -162,6 +186,7 @@ gboolean network_tick(void)
 		if (timeoutPong >= PONG_TICKS)
 		{
 			dmr_status = WAITING_CONNECT;
+			ui_net_connection(WAITING_CONNECT);
 			timeout_reconnect = 0;
 
 		}
@@ -275,4 +300,74 @@ bool writeLogin(void)
 	dmr_status = WAITING_LOGIN;
 	return network_send(TxData, 8U);
 }
+
+
+
+void activateTG(uint32_t src, uint32_t dst)
+{
+	uint8_t dmrData[53] = {0};
+	uint8_t *p;
+
+	dmrData[0] = 'D';
+	dmrData[1] = 'M';
+	dmrData[2] = 'R';
+	dmrData[3] = 'D';
+
+	dmrData[4] = 0x01; //seq
+
+	//src
+	p = (uint8_t *) &src;
+	dmrData[5]= (uint8_t) p[2];
+	dmrData[6]= (uint8_t) p[1];
+	dmrData[7]= (uint8_t) p[0];
+
+	//dst
+	p = (uint8_t *) &src;
+	dmrData[8]= (uint8_t) p[2];
+	dmrData[9]= (uint8_t) p[1];
+	dmrData[10]= (uint8_t) p[0];
+
+	//repeaterid
+	p = (uint8_t *) &settings.repeaterId;
+	dmrData[11]= (uint8_t) p[3];
+	dmrData[12]= (uint8_t) p[2];
+	dmrData[13]= (uint8_t) p[1];
+	dmrData[14]= (uint8_t) p[0];
+
+	//bit fields
+	dmrData[15]= 0b00011000; //data2 frame 2 group call slot 0
+
+	//StreamId
+	uint32_t streamId = src+dst;
+	dmrData[16]= (streamId >> 24) & 0xFF;
+	dmrData[17]= (streamId >> 16) & 0xFF;
+	dmrData[18]= (streamId >> 8) & 0xFF;
+	dmrData[19]= (streamId >> 0) & 0xFF;
+
+	//LC data
+	DMRLC_T lc;
+
+	memset(&lc, 0, sizeof(DMRLC_T));// clear automatic variable
+
+	lc.srcId = src;
+	lc.dstId = dst;
+	lc.FLCO = 0;// Private or group call
+
+	// Encode the src and dst Ids etc
+	if (!DMRFullLC_encode(&lc, &dmrData[20], DT_VOICE_LC_HEADER)) // Encode the src and dst Ids etc
+	{
+		return;
+	}
+
+	for (uint8_t i = 0U; i < 8U; i++)
+	{
+		dmrData[i + 20+ 12U] = (dmrData[i + 20 + 12U] & ~LC_SYNC_MASK_FULL[i]) | VOICE_LC_SYNC_FULL[i];
+	}
+
+	//send VOICE HEADER
+
+	//send VOICE TERMINATOR
+
+}
+
 

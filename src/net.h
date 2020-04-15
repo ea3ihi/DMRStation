@@ -26,5 +26,6 @@ bool writeAuthorisation(void);
 bool writeConfig(void);
 bool writePing(void);
 gboolean network_tick(void);
+void activateTG(uint32_t src, uint32_t dst);
 
 #endif

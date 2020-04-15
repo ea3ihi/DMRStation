@@ -153,7 +153,7 @@ void audio_advance_buffer(void)
 		bufferReadyCount++;
 	}
 
-	if (audio_state == AUDIO_STATE_IDLE && bufferReadyCount > 8) {
+	if (audio_state == AUDIO_STATE_IDLE && bufferReadyCount > 14) {
 		//bufferReadIndex = bufferWriteIndex;
 		audio_start();
 	} else if (audio_state == AUDIO_STATE_PLAYING){

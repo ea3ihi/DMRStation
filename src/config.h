@@ -12,6 +12,7 @@ typedef struct AppSettingsStruct
 {
 	uint16_t 	magicNumber;
 	uint32_t	dmrId;
+	uint32_t	repeaterId;
 	uint16_t 	remotePort;
 	uint8_t 	remoteHost[HOST_LENGTH];
 	uint8_t     password[PASSWORD_LENGTH];
