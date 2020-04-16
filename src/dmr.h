@@ -4,6 +4,12 @@
 #ifndef _APP_DMR_H_
 #define _APP_DMR_H_
 
+typedef enum {
+    DMR_STATUS_IDLE,
+	DMR_STATUS_RX,
+	DMR_STATUS_TX,
+} DMRStatus_t;
+
 enum DMRCallType {
     GROUP_CALL,
     PRIVATE_CALL
@@ -38,6 +44,7 @@ enum DMRDataType {
 
 
 void processDMRVoiceFrame(uint8_t * data);
-
+DMRStatus_t getDMRStatus();
+void setDMRStatus(DMRStatus_t status);
 
 #endif

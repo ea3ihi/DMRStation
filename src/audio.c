@@ -7,6 +7,9 @@
 #include <pulse/glib-mainloop.h>
 #include <pulse/stream.h>
 
+
+//#define ADJUST_LATENCY	1
+
 /* Private typedef -----------------------------------------------------------*/
 typedef enum {
   AUDIO_STATE_IDLE = 0,
@@ -29,6 +32,11 @@ static const pa_sample_spec ss = {
 	.format = PA_SAMPLE_S16LE,
 	.rate = 8000,
 	.channels = 1
+};
+
+pa_cvolume mainVolume = {
+		.channels = 1,
+		.values = {PA_VOLUME_NORM}
 };
 
 pa_context *ctxt;
@@ -158,6 +166,10 @@ void audio_deinit(void)
 
 }
 
+
+
+#ifdef ADJUST_LATENCY
+
 static int latency = 20000; // start latency in micro seconds
 static int underflows = 0;
 
@@ -175,6 +187,7 @@ static void stream_underflow_cb(pa_stream *s, void *userdata) {
     g_printf("latency increased to %d\n", latency);
   }
 }
+#endif
 
 void context_state_callback(pa_context *c, void *userdata) {
 	  pa_context_state_t state;
@@ -195,19 +208,18 @@ void context_state_callback(pa_context *c, void *userdata) {
 		  case PA_CONTEXT_READY:
 			*pa_ready = 1;
 
-			g_printf("pa_ready");
-
 			audio_stream = pa_stream_new (ctxt, "DMR", &ss, NULL);
 
+#ifdef ADJUST_LATENCY
 			pa_stream_set_underflow_callback(audio_stream, stream_underflow_cb, NULL);
-
+#endif
 			buffer_attr.fragsize = -1;
 			buffer_attr.maxlength = -1;
-			buffer_attr.minreq = -1; //320
+			buffer_attr.minreq = 3*320 * 3; //320
 			buffer_attr.tlength = -1;
-			buffer_attr.prebuf = -1; //3*320 * 5
+			buffer_attr.prebuf = -1; //3*320 * 16
 
-			int i =  pa_stream_connect_playback	(audio_stream,
+			pa_stream_connect_playback	(audio_stream,
 				NULL,
 				&buffer_attr,
 				0,
@@ -218,4 +230,21 @@ void context_state_callback(pa_context *c, void *userdata) {
 			break;
 	  }
 }
+
+void setVolume(uint32_t volume)
+{
+	pa_cvolume_set	(&mainVolume,
+			1,
+			(pa_volume_t) 	volume
+		);
+
+	pa_context_set_sink_volume_by_index (ctxt,
+		0,
+		&mainVolume,
+		NULL,
+		NULL
+		);
+
+}
+
 

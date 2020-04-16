@@ -1,0 +1,52 @@
+#mainWindow {
+	background-color: #fafafa;
+}
+
+.blackbg {
+	background: black;
+} 
+
+
+.greenbg {
+	background: green;
+}
+
+.redbg {
+	background: red;
+}
+
+#treeTG {
+	background: green;
+}
+
+#textInfo {
+	background: #DAFF7F
+}
+
+#button4000 {
+	background: #F00000;
+	font-weight: bold;
+    font-size: 16px;
+	color: #000000;
+}
+
+#sliderVolume slider{
+	min-width: 30px;                                                                               
+	min-height: 30px;                                                                               
+}
+
+#treeLH {
+	background: #7FC9FF;
+	font-size:24px;
+	color: black;
+}
+
+treeview.view header button {
+	border: 1px solid #000000;
+	background: #7FC9FF;
+	font-size:26px;
+	color: black;
+}
+
+
+

@@ -10,6 +10,17 @@ char ambe_fr[4][24];
 uint8_t ambeBytes[7];
 char err_str[64];
 
+DMRStatus_t dmr_status = DMR_STATUS_IDLE;
+
+DMRStatus_t getDMRStatus()
+{
+	return dmr_status;
+}
+
+void setDMRStatus(DMRStatus_t status)
+{
+	dmr_status = status;
+}
 
 /**
  * Process the 33 bytes of DMR voice data

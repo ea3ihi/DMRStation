@@ -19,6 +19,7 @@
 #include "fw_mbelib.h"
 #include "audio.h"
 #include "ambe_client.h"
+#include "lastheard.h"
 
 
 void ui_dmr_start(uint32_t src, uint32_t dst, uint8_t type);

@@ -14,6 +14,8 @@ typedef struct AppSettingsStruct
 	uint32_t	dmrId;
 	uint32_t	repeaterId;
 	uint16_t 	remotePort;
+	uint16_t 	initialTG;
+	uint16_t 	currentTG;
 	uint8_t 	remoteHost[HOST_LENGTH];
 	uint8_t     password[PASSWORD_LENGTH];
 	uint8_t     callsign[CALLSIGN_LENGTH];

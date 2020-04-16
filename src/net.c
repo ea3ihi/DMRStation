@@ -8,6 +8,9 @@
 #include "dmr/DMRSlotType.h"
 #include "dmr/QR1676.h"
 
+extern uint32_t lastSrc;
+extern uint32_t lastDst;
+
 GSocket *socket;
 
 uint8_t TxData [400];
@@ -16,15 +19,17 @@ uint8_t RxData [55];
 #define PING_TICKS 5
 #define PONG_TICKS 25
 #define RECONNECT_TICKS 15
+#define INACTIVITY_TICKS 3
 
 uint16_t timerPing;
 uint16_t timeoutPong;
 uint16_t timeout_reconnect;
+uint16_t timeoutInactivity;
 
 uint32_t salt;
 uint32_t ticks;
 
-volatile enum DMR_STATUS dmr_status = WAITING_CONNECT;
+volatile enum DMR_STATUS dmrnet_status = WAITING_CONNECT;
 
 extern AppSettingsStruct_t settings;
 
@@ -85,23 +90,23 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 						timeoutPong = 0;
 
 						if (memcmp(RxData, "RPTACK",  6U) == 0) {
-									switch (dmr_status) {
+									switch (dmrnet_status) {
 										case WAITING_LOGIN:
 											memcpy((uint8_t *) &salt, RxData + 6U, sizeof(uint32_t));
 											writeAuthorisation();
-											dmr_status = WAITING_AUTHORISATION;
+											dmrnet_status = WAITING_AUTHORISATION;
 											ui_net_connection(WAITING_AUTHORISATION);
 											break;
 										case WAITING_AUTHORISATION:
 											writeConfig();
-											dmr_status = WAITING_CONFIG;
+											dmrnet_status = WAITING_CONFIG;
 											ui_net_connection(WAITING_CONFIG);
 											break;
 										case WAITING_CONFIG:
-											dmr_status = RUNNING;
+											dmrnet_status = RUNNING;
 											ui_net_connection(RUNNING);
 
-											activateTG(settings.dmrId, 21460);
+											activateTG(settings.dmrId, settings.currentTG);
 
 											break;
 										default:
@@ -116,18 +121,28 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 
 						} else if (memcmp(RxData, "MSTNAK",  6U) == 0) {
 							//NACK
-							dmr_status = WAITING_LOGIN;
+							dmrnet_status = WAITING_LOGIN;
 							ui_net_connection(WAITING_LOGIN);
 						} else if (memcmp(RxData, "DMRD",  4U) == 0) {
 							//DMR Packet
 							//do we have a complete packet
 							if (dataLen > 52)
 							{
+								timeoutInactivity = 0;
+
 								//is it a voice packet?
 								uint8_t frameType = (RxData[15] & 0x30) >> 4;
 								uint8_t dataType = RxData[15] & 0x0F;
 								if (frameType == VOICE)
 								{
+									if (getDMRStatus() == DMR_STATUS_IDLE)
+									{
+										setDMRStatus(DMR_STATUS_RX);
+										uint32_t src = (RxData[5U] << 16) | (RxData[6U] << 8) | (RxData[7U] << 0);
+										uint32_t dst = (RxData[8U] << 16) | (RxData[9U] << 8) | (RxData[10U] << 0);
+
+										ui_dmr_start(src, dst, 1);
+									}
 
 									processDMRVoiceFrame(RxData + 20);
 
@@ -135,22 +150,35 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 								}
 								else
 								{
-									if (frameType == DATA_SYNC)
+									if (frameType == VOICE_SYNC)
+									{
+										if (getDMRStatus() == DMR_STATUS_IDLE)
+										{
+											setDMRStatus(DMR_STATUS_RX);
+											uint32_t src = (RxData[5U] << 16) | (RxData[6U] << 8) | (RxData[7U] << 0);
+											uint32_t dst = (RxData[8U] << 16) | (RxData[9U] << 8) | (RxData[10U] << 0);
+
+											ui_dmr_start(src, dst, 1);
+										}
+									}
+									else if (frameType == DATA_SYNC)
 									{
 										if (dataType == VOICE_HEADER)
 										{
 											//audio start
 											uint32_t src = (RxData[5U] << 16) | (RxData[6U] << 8) | (RxData[7U] << 0);
 											uint32_t dst = (RxData[8U] << 16) | (RxData[9U] << 8) | (RxData[10U] << 0);
-
+											setDMRStatus(DMR_STATUS_RX);
 											ui_dmr_start(src, dst, 1);
 
 											return TRUE;
-										} else if (dataType == VOICE_TERMINATOR)
+										}
+										else if (dataType == VOICE_TERMINATOR)
 										{
 											//audio end
 											audio_stop();
-											//audio start
+											setDMRStatus(DMR_STATUS_IDLE);
+
 											uint32_t src = (RxData[5U] << 16) | (RxData[6U] << 8) | (RxData[7U] << 0);
 											uint32_t dst = (RxData[8U] << 16) | (RxData[9U] << 8) | (RxData[10U] << 0);
 
@@ -175,8 +203,16 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 gboolean network_tick(void)
 {
 
-	if (dmr_status == RUNNING)
+	if (dmrnet_status == RUNNING)
 	{
+		timeoutInactivity++;
+		if (timeoutInactivity >= INACTIVITY_TICKS && lastSrc != 0)
+		{
+			lastSrc = 0;
+			timeoutInactivity = 0;
+			ui_dmr_stop(0, 0, 1);
+		}
+
 		timerPing ++;
 		if (timerPing >= PING_TICKS)
 		{
@@ -188,7 +224,7 @@ gboolean network_tick(void)
 		timeoutPong++;
 		if (timeoutPong >= PONG_TICKS)
 		{
-			dmr_status = WAITING_CONNECT;
+			dmrnet_status = WAITING_CONNECT;
 			ui_net_connection(WAITING_CONNECT);
 			timeout_reconnect = 0;
 
@@ -300,7 +336,7 @@ bool writeLogin(void)
 	TxData[6] = (uint8_t) p[1];
 	TxData[7] = (uint8_t) p[0];
 
-	dmr_status = WAITING_LOGIN;
+	dmrnet_status = WAITING_LOGIN;
 	return network_send(TxData, 8U);
 }
 

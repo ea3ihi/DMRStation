@@ -16,3 +16,4 @@ void test_audio(void);
 
 void context_state_callback(pa_context *c, void *userdata);
 void audio_write_buffer(uint8_t *data, uint16_t size);
+void setVolume(uint32_t volume);

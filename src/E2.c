@@ -1,17 +1,54 @@
 #include "main.h"
 
+extern AppSettingsStruct_t settings;
 
+extern uint32_t lastSrc;
+extern uint32_t lastDst;
 
 GtkWidget       *labelTG;
 GtkWidget       *labelID;
 GtkWidget       *buttonConnection;
 GtkWidget       *window;
+GtkWidget       *button4000;
+GtkWidget       *sliderVolume;
 
+GtkTreeView       *treeTG;
+GtkTreeView       *treeLH;
+GtkNotebook 	*notebook;
 
+G_MODULE_EXPORT void
+onVolumeChanged (GtkRange *range,
+               gpointer  user_data)
+{
+	gdouble value = gtk_range_get_value (range);
+
+	uint32_t v = (uint32_t) (65535 * value / 100);
+
+	setVolume(v);
+}
+
+G_MODULE_EXPORT void
+onButton4000Click (GtkButton *button,
+               gpointer   user_data)
+{
+
+	activateTG(settings.dmrId, 4000);
+}
+
+void signalConnectionFunc(GtkBuilder *builder,
+                          GObject *object,
+                          const gchar *signal_name,
+                          const gchar *handler_name,
+                          GObject *connect_object,
+                          GConnectFlags flags,
+                          gpointer user_data)
+{
+
+	g_signal_connect(object, signal_name, G_CALLBACK(gtk_main_quit), NULL);
+}
 
 int main (int argc, char **argv)
 {
-
 
 	GtkBuilder      *builder;
 
@@ -21,8 +58,9 @@ int main (int argc, char **argv)
 	gtk_window_set_default_icon_name("DMR");
 	g_setenv("PULSE_PROP_media.role", "phone", TRUE);
 
-
 	setDefaultSettings();
+
+	settings.currentTG = settings.initialTG;
 
 	ambeclient_init();
 	audio_init();
@@ -40,7 +78,30 @@ int main (int argc, char **argv)
 	labelTG = GTK_WIDGET(gtk_builder_get_object(builder, "labelTG"));
 	labelID = GTK_WIDGET(gtk_builder_get_object(builder, "labelID"));
 	buttonConnection = GTK_WIDGET(gtk_builder_get_object(builder, "buttonConnection"));
+	button4000 = GTK_WIDGET(gtk_builder_get_object(builder, "button4000"));
+	sliderVolume = GTK_WIDGET(gtk_builder_get_object(builder, "sliderVolume"));
+	treeTG = (GtkTreeView *) gtk_builder_get_object(builder, "treeTG");
+	treeLH = (GtkTreeView *) gtk_builder_get_object(builder, "treeLH");
+	notebook = (GtkNotebook *) gtk_builder_get_object(builder, "notebook1");
+
+	gtk_notebook_set_current_page (notebook, 1); //show last heard at start
+
+	g_signal_connect(button4000, "clicked", G_CALLBACK(onButton4000Click), NULL);
+	g_signal_connect(sliderVolume, "value-changed", G_CALLBACK(onVolumeChanged), NULL);
+
 	ui_net_connection(WAITING_LOGIN);
+	lastheard_init();
+
+	gtk_range_set_value ( GTK_RANGE(sliderVolume),
+	                     30.0);
+
+	//gtk_builder_connect_signals(builder, NULL);
+
+	/*
+	gtk_builder_connect_signals_full (builder,
+	                                  signalConnectionFunc,
+	                                  NULL);
+	*/
 
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
@@ -66,26 +127,38 @@ int main (int argc, char **argv)
 }
 
 
+
 void ui_dmr_start(uint32_t src, uint32_t dst, uint8_t type)
 {
 	gchar str[30] ={0};
 
-	g_sprintf(str, "TG %d", dst);
+	g_snprintf(str, 30, "TG %d", dst);
 
 	gtk_label_set_text (GTK_LABEL(labelTG), (gchar *) str);
 
-	g_sprintf(str, "ID: %d", src);
+	g_snprintf(str, 30, "ID: %d", src);
 	gtk_label_set_text (GTK_LABEL(labelID), (gchar *) str);
 
+	if (src != lastSrc || dst != lastDst)
+	{
+		//TODO: lookup callsigns and so
+		lastHeardData_t lh;
+		g_snprintf((gchar *) lh.call, sizeof(lh.call), "%d", src);
+		g_snprintf((gchar *) lh.name, sizeof(lh.name), " - - ");
+		lastHeardAdd(&lh);
+
+		lastSrc = src;
+		lastDst = dst;
+	}
 }
 
 void ui_dmr_stop(uint32_t src, uint32_t dst, uint8_t type)
 {
-	//gchar str[30] ={0};
+	gchar str[30] ={0};
 
-	//g_sprintf(str, "TG: %d", dst);
+	g_snprintf(str, 30, "TG %d", settings.currentTG);
 
-	//gtk_label_set_text (GTK_LABEL(labelTG), (gchar *) str);
+	gtk_label_set_text (GTK_LABEL(labelTG), (gchar *) str);
 
 	gtk_label_set_text (GTK_LABEL(labelID), "");
 
@@ -100,12 +173,12 @@ void ui_net_connection(uint8_t status)
 	switch(status)
 	{
 	case WAITING_LOGIN:
-			g_sprintf(str, "Log in...");
+			g_snprintf(str, 20, "Log in...");
 			gtk_style_context_remove_class(context, "greenbg");
 			gtk_style_context_add_class(context, "redbg");
 			break;
 	case WAITING_CONNECT:
-			g_sprintf(str, "Reconnecting...");
+			g_snprintf(str, 20, "Reconnecting...");
 			gtk_style_context_remove_class(context, "greenbg");
 			gtk_style_context_add_class(context, "redbg");
 			break;
@@ -114,7 +187,7 @@ void ui_net_connection(uint8_t status)
 	case WAITING_CONFIG:
 			break;
 	case RUNNING:
-		g_sprintf(str, "Connected");
+		g_snprintf(str, 20, "Connected");
 		gtk_style_context_remove_class(context,"redbg");
 		gtk_style_context_add_class(context,"greenbg");
 			break;
@@ -132,7 +205,7 @@ css_parse_error (GtkCssProvider *provider,
                gpointer        user_data)
 {
 
-	g_print("Parsing error");
+	g_print("CSS parsing error\n");
 }
 void init_CSS(void)
 {
@@ -160,7 +233,7 @@ void init_CSS(void)
                                      -1,
                                      &error);*/
 
-    g_signal_connect(provider, "parse_error", G_CALLBACK(css_parse_error), NULL);
+    g_signal_connect(provider, "parsing-error", G_CALLBACK(css_parse_error), NULL);
     gtk_css_provider_load_from_resource (provider, "/com/ea3ihi/openDMR/styles.css");
 
     g_object_unref (provider);
