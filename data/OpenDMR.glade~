@@ -17,7 +17,6 @@
     <property name="default_height">480</property>
     <property name="hide_titlebar_when_maximized">True</property>
     <property name="decorated">False</property>
-    <signal name="destroy" handler="gtk_main_quit()" swapped="no"/>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
@@ -92,7 +91,37 @@
               </object>
               <packing>
                 <property name="x">10</property>
-                <property name="y">160</property>
+                <property name="y">140</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="buttonPTT">
+                <property name="label" translatable="yes">PTT</property>
+                <property name="name">buttonPTT</property>
+                <property name="width_request">100</property>
+                <property name="height_request">100</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="x">100</property>
+                <property name="y">290</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="labelTT">
+                <property name="name">labelTT</property>
+                <property name="width_request">300</property>
+                <property name="height_request">80</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">00:00</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans Bold 28"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="y">200</property>
               </packing>
             </child>
           </object>

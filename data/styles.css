@@ -26,15 +26,16 @@
 #button4000 {
 	background: #F00000;
 	font-weight: bold;
-    font-size: 16px;
-	color: #000000;
+    font-size: 24px;
+	color: #FFFFFF;
+	text-shadow: none;
 }
 
 #buttonExit {
 	background: #E00000;
 	font-weight: bold;
     font-size: 20px;
-	color: #000000;
+	color: #FFFFFF;
 }
 
 #sliderVolume slider{
@@ -44,7 +45,7 @@
 
 #treeLH {
 	background: #7FC9FF;
-	font-size:24px;
+	font-size:28px;
 	color: black;
 }
 
@@ -53,11 +54,23 @@
 }
 
 treeview.view header button {
-	border: 1px solid #000000;
+	border: 1px solid #303030;
 	background: #7FC9FF;
-	font-size:26px;
+	font-size:30px;
 	color: black;
 }
 
+#buttonPTT
+{
+	color: white;
+	text-shadow: none;
+	font-size:20px;
+	font-weight: bold;
+	background: green;
+	border-radius: 80px;
+}
+#buttonPTT:checked {
+	background: #802020;
+}
 
 

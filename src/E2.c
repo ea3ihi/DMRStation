@@ -7,10 +7,13 @@ extern uint32_t lastDst;
 
 GtkWidget       *labelTG;
 GtkWidget       *labelID;
+GtkWidget       *labelTT;
 GtkWidget       *buttonConnection;
 GtkWidget       *window;
 GtkWidget       *button4000;
 GtkWidget       *buttonExit;
+GtkWidget       *buttonPTT;
+
 GtkWidget       *sliderVolume;
 
 GtkTreeView       *treeTG;
@@ -49,6 +52,21 @@ onButtonExitClick (GtkButton *button,
 	gtk_window_close(GTK_WINDOW(window));
 }
 
+void onButtonPTT(GtkToggleButton *togglebutton,
+        gpointer         user_data)
+{
+	if (gtk_toggle_button_get_active (togglebutton))
+	{
+		gtk_widget_show(labelTT);
+		audio_record_start();
+	}
+	else
+	{
+		gtk_widget_hide(labelTT);
+		audio_record_stop();
+	}
+
+}
 
 
 int main (int argc, char **argv)
@@ -81,9 +99,11 @@ int main (int argc, char **argv)
 
 	labelTG = GTK_WIDGET(gtk_builder_get_object(builder, "labelTG"));
 	labelID = GTK_WIDGET(gtk_builder_get_object(builder, "labelID"));
+	labelTT = GTK_WIDGET(gtk_builder_get_object(builder, "labelTT"));
 	buttonConnection = GTK_WIDGET(gtk_builder_get_object(builder, "buttonConnection"));
 	button4000 = GTK_WIDGET(gtk_builder_get_object(builder, "button4000"));
 	buttonExit = GTK_WIDGET(gtk_builder_get_object(builder, "buttonExit"));
+	buttonPTT = GTK_WIDGET(gtk_builder_get_object(builder, "buttonPTT"));
 	sliderVolume = GTK_WIDGET(gtk_builder_get_object(builder, "sliderVolume"));
 	treeTG = (GtkTreeView *) gtk_builder_get_object(builder, "treeTG");
 	treeLH = (GtkTreeView *) gtk_builder_get_object(builder, "treeLH");
@@ -94,6 +114,9 @@ int main (int argc, char **argv)
 	g_signal_connect(button4000, "clicked", G_CALLBACK(onButton4000Click), NULL);
 	g_signal_connect(sliderVolume, "value-changed", G_CALLBACK(onVolumeChanged), NULL);
 	g_signal_connect(buttonExit, "clicked", G_CALLBACK(onButtonExitClick), NULL);
+
+	g_signal_connect(buttonPTT, "toggled", G_CALLBACK(onButtonPTT), NULL);
+
 
 	g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 

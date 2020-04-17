@@ -4,13 +4,14 @@
 
 
 #define AUDIO_BUFFERS	0
-#define AUDIO_BUFFER_SIZE	160
+#define AUDIO_BUFFER_SIZE	160	//in samples, not bytes
 
 void audio_init(void);
 void audio_deinit(void);
 void audio_start(void);
 void audio_stop(void);
-
+void audio_record_start(void);
+void audio_record_stop(void);
 
 void test_audio(void);
 
