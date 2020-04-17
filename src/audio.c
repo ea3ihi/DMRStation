@@ -6,7 +6,7 @@
 #include <pulse/context.h>
 #include <pulse/glib-mainloop.h>
 #include <pulse/stream.h>
-
+#include <pulse/introspect.h>
 
 //#define ADJUST_LATENCY	1
 
@@ -136,6 +136,25 @@ void audio_write_buffer(uint8_t *data, uint16_t size)
 			);
 }
 
+
+void pa_sink_info_cb_func
+(pa_context *c, const pa_sink_info *i, int eol, void *userdata)
+{
+	if (i)
+	{
+		g_print("Sink %d: %s\n%s\n",i->index,  i->name, i->description);
+	}
+}
+
+void pa_source_info_cb_func
+(pa_context *c, const pa_source_info *i, int eol, void *userdata)
+{
+	if (i)
+	{
+		g_print("Source %d: %s\n%s\n",i->index,  i->name, i->description);
+	}
+}
+
 void audio_init(void)
 {
 	int r;
@@ -153,6 +172,7 @@ void audio_init(void)
 
 	r = pa_context_connect(ctxt, NULL, PA_CONTEXT_NOAUTOSPAWN|PA_CONTEXT_NOFAIL, NULL);
 	g_assert(r == 0);
+
 
 
 }
@@ -208,6 +228,16 @@ void context_state_callback(pa_context *c, void *userdata) {
 		  case PA_CONTEXT_READY:
 			*pa_ready = 1;
 
+			pa_context_get_sink_info_list(ctxt,
+						pa_sink_info_cb_func,
+						NULL
+						);
+
+			pa_context_get_source_info_list(ctxt,
+									pa_source_info_cb_func,
+									NULL
+									);
+
 			audio_stream = pa_stream_new (ctxt, "DMR", &ss, NULL);
 
 #ifdef ADJUST_LATENCY
@@ -238,12 +268,21 @@ void setVolume(uint32_t volume)
 			(pa_volume_t) 	volume
 		);
 
+	/*
 	pa_context_set_sink_volume_by_index (ctxt,
 		0,
 		&mainVolume,
 		NULL,
 		NULL
-		);
+		);*/
+
+	pa_context_set_sink_volume_by_name (ctxt,
+			"alsa_output.platform-sound.analog-stereo",
+			&mainVolume,
+			NULL,
+			NULL
+			);
+
 
 }
 

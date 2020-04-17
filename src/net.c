@@ -29,6 +29,8 @@ uint16_t timeoutInactivity;
 uint32_t salt;
 uint32_t ticks;
 
+guint netTimeout;
+
 volatile enum DMR_STATUS dmrnet_status = WAITING_CONNECT;
 
 extern AppSettingsStruct_t settings;
@@ -57,12 +59,19 @@ void net_init(void)
 	g_source_set_callback(source, (GSourceFunc) dataInCallback, NULL,NULL);
 	g_source_attach(source, g_main_context_default());
 
-	g_timeout_add_seconds(1, (GSourceFunc) network_tick, NULL);
+	netTimeout = g_timeout_add_seconds(1, (GSourceFunc) network_tick, NULL);
 
 	//g_socket_send (socket, "RPTL123456", 10, NULL, NULL);
 
 	writeLogin();
 
+}
+
+void net_deinit(void)
+{
+	g_socket_close(socket, NULL);
+
+	g_source_remove (netTimeout);
 }
 
 void reconnect(void)
@@ -347,16 +356,17 @@ void activateTG(uint32_t src, uint32_t dst){
 	uint8_t dmrData[53] = {0};
 
 	//send VOICE HEADER
-	createVoiceHeader(src, dst, dmrData);
+	createVoiceHeader(src, dst, dmrData, 1);
 	network_send(dmrData, 53);
 
+	//send some empty audio?
+
 	//send VOICE TERMINATOR
-	createVoiceTerminator(src, dst, dmrData);
-	dmrData[4] = 2; //seq
+	createVoiceTerminator(src, dst, dmrData, 2);
 	network_send(dmrData, 53);
 }
 
-void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut)
+void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq)
 {
 	uint8_t dmrData[53] = {0};
 	uint8_t *p;
@@ -366,7 +376,7 @@ void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut)
 	dmrData[2] = 'R';
 	dmrData[3] = 'D';
 
-	dmrData[4] = 0x01; //seq
+	dmrData[4] = seq;
 
 	//src
 	p = (uint8_t *) &src;
@@ -421,7 +431,7 @@ void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut)
 
 }
 
-void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut)
+void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq)
 {
 	uint8_t dmrData[53] = {0};
 	uint8_t *p;
@@ -431,7 +441,7 @@ void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut)
 	dmrData[2] = 'R';
 	dmrData[3] = 'D';
 
-	dmrData[4] = 0x01; //seq
+	dmrData[4] = seq;
 
 	//src
 	p = (uint8_t *) &src;

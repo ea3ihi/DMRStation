@@ -30,6 +30,13 @@
 	color: #000000;
 }
 
+#buttonExit {
+	background: #E00000;
+	font-weight: bold;
+    font-size: 20px;
+	color: #000000;
+}
+
 #sliderVolume slider{
 	min-width: 30px;                                                                               
 	min-height: 30px;                                                                               
@@ -39,6 +46,10 @@
 	background: #7FC9FF;
 	font-size:24px;
 	color: black;
+}
+
+#labelInfo {
+	background: #E2FFFF;
 }
 
 treeview.view header button {

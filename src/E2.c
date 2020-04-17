@@ -10,13 +10,14 @@ GtkWidget       *labelID;
 GtkWidget       *buttonConnection;
 GtkWidget       *window;
 GtkWidget       *button4000;
+GtkWidget       *buttonExit;
 GtkWidget       *sliderVolume;
 
 GtkTreeView       *treeTG;
 GtkTreeView       *treeLH;
 GtkNotebook 	*notebook;
 
-G_MODULE_EXPORT void
+void
 onVolumeChanged (GtkRange *range,
                gpointer  user_data)
 {
@@ -27,7 +28,7 @@ onVolumeChanged (GtkRange *range,
 	setVolume(v);
 }
 
-G_MODULE_EXPORT void
+void
 onButton4000Click (GtkButton *button,
                gpointer   user_data)
 {
@@ -35,17 +36,20 @@ onButton4000Click (GtkButton *button,
 	activateTG(settings.dmrId, 4000);
 }
 
-void signalConnectionFunc(GtkBuilder *builder,
-                          GObject *object,
-                          const gchar *signal_name,
-                          const gchar *handler_name,
-                          GObject *connect_object,
-                          GConnectFlags flags,
-                          gpointer user_data)
+void
+onButtonExitClick (GtkButton *button,
+               gpointer   user_data)
 {
 
-	g_signal_connect(object, signal_name, G_CALLBACK(gtk_main_quit), NULL);
+	audio_deinit();
+	net_deinit();
+	//net_deinit();
+	//gtk_main_quit();
+
+	gtk_window_close(GTK_WINDOW(window));
 }
+
+
 
 int main (int argc, char **argv)
 {
@@ -79,6 +83,7 @@ int main (int argc, char **argv)
 	labelID = GTK_WIDGET(gtk_builder_get_object(builder, "labelID"));
 	buttonConnection = GTK_WIDGET(gtk_builder_get_object(builder, "buttonConnection"));
 	button4000 = GTK_WIDGET(gtk_builder_get_object(builder, "button4000"));
+	buttonExit = GTK_WIDGET(gtk_builder_get_object(builder, "buttonExit"));
 	sliderVolume = GTK_WIDGET(gtk_builder_get_object(builder, "sliderVolume"));
 	treeTG = (GtkTreeView *) gtk_builder_get_object(builder, "treeTG");
 	treeLH = (GtkTreeView *) gtk_builder_get_object(builder, "treeLH");
@@ -88,6 +93,9 @@ int main (int argc, char **argv)
 
 	g_signal_connect(button4000, "clicked", G_CALLBACK(onButton4000Click), NULL);
 	g_signal_connect(sliderVolume, "value-changed", G_CALLBACK(onVolumeChanged), NULL);
+	g_signal_connect(buttonExit, "clicked", G_CALLBACK(onButtonExitClick), NULL);
+
+	g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 
 	ui_net_connection(WAITING_LOGIN);
 	lastheard_init();
@@ -95,19 +103,7 @@ int main (int argc, char **argv)
 	gtk_range_set_value ( GTK_RANGE(sliderVolume),
 	                     30.0);
 
-	//gtk_builder_connect_signals(builder, NULL);
-
-	/*
-	gtk_builder_connect_signals_full (builder,
-	                                  signalConnectionFunc,
-	                                  NULL);
-	*/
-
-	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-
 	init_CSS();
-
-
 	net_init();
 
 	//GtkWindow *mainWindow = GTK_WINDOW(window);
