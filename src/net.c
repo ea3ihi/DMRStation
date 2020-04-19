@@ -192,6 +192,7 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 							//NACK
 							dmrnet_status = WAITING_LOGIN;
 							ui_net_connection(WAITING_LOGIN);
+							g_print("NACK!\n");
 						} else if (memcmp(RxData, "DMRD",  4U) == 0) {
 							//DMR Packet
 							//do we have a complete packet

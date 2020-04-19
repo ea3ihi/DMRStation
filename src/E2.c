@@ -146,8 +146,11 @@ int main (int argc, char **argv)
 	ui_net_connection(WAITING_LOGIN);
 	lastheard_init();
 
+	ui_dmr_stop(settings.dmrId, settings.currentTG, 1);
+
 	gtk_range_set_value ( GTK_RANGE(sliderVolume),
 	                     30.0);
+
 
 	init_CSS();
 	net_init();
