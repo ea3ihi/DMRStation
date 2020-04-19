@@ -72,7 +72,7 @@ gboolean ambeInCallback(GSocket *source, GIOCondition condition, gpointer data)
 }
 
 
-bool ambe_send(uint8_t * data, unsigned int length)
+bool ambe_send(const uint8_t * data, unsigned int length)
 {
 	GError *error = NULL;
 	g_socket_send (ambeSocket, (gchar *)data, (gsize) length, NULL, &error);

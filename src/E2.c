@@ -20,6 +20,8 @@ GtkTreeView       *treeTG;
 GtkTreeView       *treeLH;
 GtkNotebook 	*notebook;
 
+
+
 void
 onVolumeChanged (GtkRange *range,
                gpointer  user_data)

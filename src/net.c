@@ -589,8 +589,8 @@ void prepareVoiceFrame( uint8_t * ambe72Data)
 
 	network_send(dmrData, 53);
 
-	//test
-	processDMRVoiceFrame(dmrData + 20);
+	//processDMRVoiceFrame(dmrData + 20);
+
 }
 
 void createVoiceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId, uint8_t voiceSeq, uint8_t * ambe72Data)
@@ -671,7 +671,7 @@ void dmr_start_tx(void)
 
 
 
-dmr_stop_tx()
+void dmr_stop_tx(void)
 {
 	uint8_t dmrData[53];
 	createVoiceTerminator(settings.dmrId,
