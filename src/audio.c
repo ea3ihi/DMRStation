@@ -12,8 +12,9 @@
 
 #define PCM_AUDIO_FRAMES	3 //Frames to have to send to ambe
 #define RECORD_BUFFER_SIZE	8000*2*5 // Buffer up to 5 seconds of audio
-#define RECORD_BUFFER_ATTR_FRAG_SIZE	320*8;
+#define RECORD_BUFFER_ATTR_FRAG_SIZE	320*4;
 
+#define AUDIO_TICK_INTERVAL	60	//ms
 
 /* Private typedef -----------------------------------------------------------*/
 typedef enum {
@@ -110,6 +111,8 @@ gboolean audio_tick(void)
 			ambe_send(data, 320);
 		}
 	}
+
+	tick_DMRQueue();
 
 	return true;
 }
@@ -272,7 +275,7 @@ void audio_init(void)
 	g_assert(r == 0);
 
 
-	audioTimeout = g_timeout_add(60, (GSourceFunc) audio_tick, NULL);
+	audioTimeout = g_timeout_add(AUDIO_TICK_INTERVAL, (GSourceFunc) audio_tick, NULL);
 }
 
 void audio_deinit(void)

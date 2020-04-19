@@ -55,13 +55,25 @@ volatile uint32_t DMROutBufferWriteIndex;
 volatile uint32_t DMROutBufferCount;
 uint8_t dmrOutBuffer[DMR_OUT_BUFFER_SIZE][53];
 
-void writeDMRQueue(uint8_t data){
+void flushDMRQueue(void)
+{
+	DMROutBufferWriteIndex=0;
+	DMROutBufferCount=0;
+	DMROutBufferReadIndex=0;
+}
+
+void writeDMRQueue(uint8_t *data)
+{
 	if (DMROutBufferCount< DMR_OUT_BUFFER_SIZE)
 	{
 		memcpy(&dmrOutBuffer[DMROutBufferWriteIndex][0], data, 53);
 		DMROutBufferWriteIndex++;
 		DMROutBufferWriteIndex %= DMR_OUT_BUFFER_SIZE;
 		DMROutBufferCount++;
+	}
+	else
+	{
+		g_printf("DMRQueue overrun\n");
 	}
 }
 
@@ -74,6 +86,17 @@ void readDMRQueue(uint8_t *dataOut)
 		DMROutBufferReadIndex %= DMR_OUT_BUFFER_SIZE;
 		DMROutBufferCount--;
 	}
+}
+
+void tick_DMRQueue(void)
+{
+	if (DMROutBufferCount > 0)
+	{
+		uint8_t data[53];
+		readDMRQueue(data);
+		network_send(data, 53);
+	}
+
 }
 
 void net_init(void)
@@ -579,6 +602,7 @@ void createSilenceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t se
 
 	//bit fields
 	voiceSeq = voiceSeq & 0x0F;
+	voiceSeq = voiceSeq % 6;
 	if (voiceSeq == 0)
 	{
 		voiceSeq = 0x10;
@@ -613,12 +637,14 @@ void prepareVoiceFrame( uint8_t * ambe72Data)
 				ambe72Data);
 
 	dmr_tx_control.voiceSequence++;
-	dmr_tx_control.voiceSequence %= 15;
+	dmr_tx_control.voiceSequence %= 6;
 
 	dmr_tx_control.DMRSequence++;
 
-	network_send(dmrData, 53);
+	//network_send(dmrData, 53);
+	writeDMRQueue((uint8_t *) dmrData);
 
+	//loopback test
 	//processDMRVoiceFrame(dmrData + 20);
 
 }
@@ -656,6 +682,7 @@ void createVoiceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq,
 
 	//bit fields
 	voiceSeq = voiceSeq & 0x0F;
+	voiceSeq = voiceSeq % 6;
 	if (voiceSeq == 0)
 	{
 		voiceSeq = 0x10;
@@ -685,6 +712,7 @@ void createVoiceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq,
 
 void dmr_start_tx(void)
 {
+	flushDMRQueue();
 
 	dmr_tx_control.streamId = rand()+1;
 	dmr_tx_control.voiceSequence=0;
@@ -697,7 +725,8 @@ void dmr_start_tx(void)
 				dmrData,
 				dmr_tx_control.DMRSequence++,
 				dmr_tx_control.streamId);
-	network_send(dmrData, 53);
+	//network_send(dmrData, 53);
+	writeDMRQueue((uint8_t *) dmrData);
 }
 
 
@@ -713,6 +742,7 @@ void dmr_stop_tx(void)
 					dmrData,
 					dmr_tx_control.DMRSequence,
 					dmr_tx_control.streamId);
-	network_send(dmrData, 53);
+	//network_send(dmrData, 53);
+	writeDMRQueue((uint8_t *) dmrData);
 }
 

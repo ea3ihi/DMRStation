@@ -47,4 +47,11 @@ void prepareVoiceFrame( uint8_t * ambe72Data);
 void dmr_start_tx(void);
 void dmr_stop_tx(void);
 
+
+void tick_DMRQueue(void);
+void readDMRQueue(uint8_t *dataOut);
+void writeDMRQueue(uint8_t *data);
+
+
+
 #endif
