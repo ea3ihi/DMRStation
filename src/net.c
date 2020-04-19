@@ -15,6 +15,7 @@ GSocket *socket;
 
 uint8_t TxData [400];
 uint8_t RxData [55];
+uint8_t dmrData[53];
 
 #define PING_TICKS 5
 #define PONG_TICKS 25
@@ -46,6 +47,34 @@ const unsigned char SILENCE_FRAME[] = {
 							0xB9U, 0xE8U, 0x81U, 0x52U, 0x61U, 0x73U, 0x00U, 0x2AU, 0x6BU, 0xB9U, 0xE8U,
 							0x81U, 0x52U, 0x60U, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U, 0x01U, 0x73U, 0x00U,
 							0x2AU, 0x6BU, 0xB9U, 0xE8U, 0x81U, 0x52U, 0x61U, 0x73U, 0x00U, 0x2AU, 0x6BU};
+
+
+#define DMR_OUT_BUFFER_SIZE 50
+volatile uint32_t DMROutBufferReadIndex;
+volatile uint32_t DMROutBufferWriteIndex;
+volatile uint32_t DMROutBufferCount;
+uint8_t dmrOutBuffer[DMR_OUT_BUFFER_SIZE][53];
+
+void writeDMRQueue(uint8_t data){
+	if (DMROutBufferCount< DMR_OUT_BUFFER_SIZE)
+	{
+		memcpy(&dmrOutBuffer[DMROutBufferWriteIndex][0], data, 53);
+		DMROutBufferWriteIndex++;
+		DMROutBufferWriteIndex %= DMR_OUT_BUFFER_SIZE;
+		DMROutBufferCount++;
+	}
+}
+
+void readDMRQueue(uint8_t *dataOut)
+{
+	if (DMROutBufferCount> 0)
+	{
+		memcpy(dataOut, &dmrOutBuffer[DMROutBufferReadIndex][0], 53);
+		DMROutBufferReadIndex++;
+		DMROutBufferReadIndex %= DMR_OUT_BUFFER_SIZE;
+		DMROutBufferCount--;
+	}
+}
 
 void net_init(void)
 {
@@ -363,7 +392,7 @@ bool writeLogin(void)
 
 void activateTG(uint32_t src, uint32_t dst){
 
-	uint8_t dmrData[53] = {0};
+	memset(dmrData, 0, 53);
 	uint8_t seq = 1;
 
 	uint32_t streamid = rand() +1;
@@ -390,7 +419,7 @@ void activateTG(uint32_t src, uint32_t dst){
 
 void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId)
 {
-	uint8_t dmrData[53] = {0};
+	uint8_t *dmrData = dataOut;
 	uint8_t *p;
 
 	dmrData[0] = 'D';
@@ -448,13 +477,14 @@ void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq
 		dmrData[i + 20+ 12U] = (dmrData[i + 20 + 12U] & ~LC_SYNC_MASK_FULL[i]) | VOICE_LC_SYNC_FULL[i];
 	}
 
-	memcpy(dataOut, dmrData, 53);
+	//memcpy(dataOut, dmrData, 53);
 
 }
 
 void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId)
 {
-	uint8_t dmrData[53] = {0};
+
+	memset(dmrData, 0, 53);
 	uint8_t *p;
 
 	dmrData[0] = 'D';
@@ -512,13 +542,13 @@ void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t
 		dmrData[i + 20+ 12U] = (dmrData[i + 20 + 12U] & ~LC_SYNC_MASK_FULL[i]) | TERMINATOR_LC_SYNC_FULL[i];
 	}
 
-	memcpy(dataOut, dmrData, 53);
+	//memcpy(dataOut, dmrData, 53);
 
 }
 
 void createSilenceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId, uint8_t voiceSeq)
 {
-	uint8_t dmrData[53] = {0};
+	memset(dmrData, 0, 53);
 	uint8_t *p;
 
 	dmrData[0] = 'D';
@@ -564,7 +594,7 @@ void createSilenceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t se
 	//Silence Data
 	memcpy(&dmrData[20], SILENCE_FRAME, 33);
 
-	memcpy(dataOut, dmrData, 53);
+	//memcpy(dataOut, dmrData, 53);
 
 }
 
@@ -572,7 +602,7 @@ void createSilenceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t se
 
 void prepareVoiceFrame( uint8_t * ambe72Data)
 {
-	uint8_t dmrData[53];
+	memset(dmrData, 0, 53);
 
 	createVoiceFrame(settings.dmrId,
 				dmr_tx_control.destination,
@@ -595,7 +625,7 @@ void prepareVoiceFrame( uint8_t * ambe72Data)
 
 void createVoiceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId, uint8_t voiceSeq, uint8_t * ambe72Data)
 {
-	uint8_t dmrData[53] = {0};
+	uint8_t *dmrData = dataOut;
 	uint8_t *p;
 
 	dmrData[0] = 'D';
@@ -649,17 +679,18 @@ void createVoiceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq,
 	memcpy(&dmrData[40], &ambe72Data[14], 13);
 
 
-	memcpy(dataOut, dmrData, 53);
+	//memcpy(dataOut, dmrData, 53);
 }
 
 
 void dmr_start_tx(void)
 {
-	uint8_t dmrData[53];
+
 	dmr_tx_control.streamId = rand()+1;
 	dmr_tx_control.voiceSequence=0;
 	dmr_tx_control.DMRSequence=0;
 	dmr_tx_control.destination = settings.currentTG;
+	dmr_tx_control.dmr_status = DMR_STATUS_TX;
 
 	createVoiceHeader(settings.dmrId,
 				dmr_tx_control.destination,
@@ -673,7 +704,10 @@ void dmr_start_tx(void)
 
 void dmr_stop_tx(void)
 {
-	uint8_t dmrData[53];
+	g_printf("dmr_stop_tx\n");
+	dmr_tx_control.dmr_status = DMR_STATUS_IDLE;
+
+
 	createVoiceTerminator(settings.dmrId,
 					dmr_tx_control.destination,
 					dmrData,

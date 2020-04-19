@@ -70,14 +70,16 @@ void onButtonPTT(GtkToggleButton *togglebutton,
 	}
 	else
 	{
+		audio_record_stop();
+
 		gtk_widget_hide(labelTT);
 
 		while(gtk_events_pending()){
 			gtk_main_iteration();
 		}
 
-		dmr_stop_tx();
-		audio_record_stop();
+		//dmr_stop_tx();
+
 		g_printf("PTT OFF\n");
 	}
 

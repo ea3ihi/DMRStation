@@ -22,6 +22,7 @@ typedef struct dmr_control_struct {
 	uint8_t voiceSequence;
 	uint32_t streamId;
 	uint32_t destination;
+	DMRStatus_t dmr_status;
 } dmr_control_struct_t;
 
 gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data);
