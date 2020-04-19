@@ -58,12 +58,25 @@ void onButtonPTT(GtkToggleButton *togglebutton,
 	if (gtk_toggle_button_get_active (togglebutton))
 	{
 		gtk_widget_show(labelTT);
+		while(gtk_events_pending()){
+					gtk_main_iteration();
+				}
+
+		dmr_start_tx();
 		audio_record_start();
+		g_printf("PTT ON\n");
 	}
 	else
 	{
 		gtk_widget_hide(labelTT);
+
+		while(gtk_events_pending()){
+			gtk_main_iteration();
+		}
+
+		dmr_stop_tx();
 		audio_record_stop();
+		g_printf("PTT OFF\n");
 	}
 
 }
@@ -75,6 +88,12 @@ int main (int argc, char **argv)
 	GtkBuilder      *builder;
 
 	gtk_init(&argc, &argv);
+
+	//test ambe processing
+	//uint8_t ambe49[7] = {0xF0, 00, 00, 00, 00, 00, 00};//f0000000000000
+	//uint8_t ambe72[9]  = {0};
+	//convert49BitTo72BitAMBE(ambe49, ambe72);
+	//expected result: {0xAC, 0xAA, 0x40, 0x20, 0x00, 0x44, 0x40, 0x80, 0x80)
 
 	g_set_application_name("OpenDMR network radio");
 	gtk_window_set_default_icon_name("DMR");

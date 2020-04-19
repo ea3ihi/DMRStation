@@ -2,6 +2,17 @@
 
 #include "main.h"
 
+#define AMBE_BUFFERS		10
+#define AMBE_BUFFER_SIZE	7
+
+uint8_t ambeBuffer[AMBE_BUFFERS][AMBE_BUFFER_SIZE];
+uint8_t bufferReadIndex = 0;
+uint8_t bufferWriteIndex = 0;
+uint8_t bufferCount = 0;
+
+void addAmbeBuffer(uint8_t * dataIn);
+void readAmbeBuffer(uint8_t * dataOut);
+void processAmbeBuffer();
 
 GSocket *ambeSocket;
 
@@ -49,6 +60,7 @@ gboolean ambeInCallback(GSocket *source, GIOCondition condition, gpointer data)
 				return TRUE;
 			} else if (dataLen == 7){
 				//ambe data
+				addAmbeBuffer(RxData);
 				return TRUE;
 			}
 			break;
@@ -67,3 +79,76 @@ bool ambe_send(uint8_t * data, unsigned int length)
 
 	return true;
 }
+
+
+
+void addAmbeBuffer(uint8_t * dataIn)
+{
+	memcpy(&ambeBuffer[bufferWriteIndex][0], dataIn, AMBE_BUFFER_SIZE);
+	bufferCount++;
+
+	bufferWriteIndex++;
+	bufferWriteIndex %= AMBE_BUFFERS;
+
+	if (bufferCount >=3) {
+		processAmbeBuffer();
+	}
+
+}
+
+void readAmbeBuffer(uint8_t * dataOut)
+{
+	memcpy(dataOut, &ambeBuffer[bufferReadIndex][0], AMBE_BUFFER_SIZE);
+	bufferCount--;
+	bufferReadIndex++;
+	bufferReadIndex %= AMBE_BUFFERS;
+}
+
+void processAmbeBuffer()
+{
+	uint8_t ambe49[3][7];
+	uint8_t ambe72[3][9];
+
+	//get buffers
+	readAmbeBuffer(&ambe49[0][0]);
+	readAmbeBuffer(&ambe49[1][0]);
+	readAmbeBuffer(&ambe49[2][0]);
+
+	//ambe 49 to 72
+	convert49BitTo72BitAMBE(&ambe49[0][0], &ambe72[0][0]);
+	convert49BitTo72BitAMBE(&ambe49[1][0], &ambe72[1][0]);
+	convert49BitTo72BitAMBE(&ambe49[2][0], &ambe72[2][0]);
+
+	prepareVoiceFrame((uint8_t *) ambe72);
+}
+
+
+
+void convert49BitTo72BitAMBE( uint8_t *inAmbe49 , uint8_t *outAmbe72)
+{
+	uint8_t	ambe49bits[49];
+	char ambeFrame[4][24];
+
+	memset (ambeFrame, 0, 24*4);
+
+	uint8_t tmp = 0;
+	int pos = 0;
+	for (int j = 0; j<7; j++)
+	{
+		for (int i = 7; i > -1 ; i--)
+		{
+			tmp = inAmbe49[pos >>3] & ( 1 << i );
+			ambe49bits[pos] = tmp ? 1 : 0;
+			pos++;
+		}
+	}
+
+	convert49BitAmbeTo72BitFrames(ambe49bits, (uint8_t *) &ambeFrame);    // take raw ambe 49 + ecc and place it into C0-C3
+	mbe_demodulateAmbe3600x2450Data(ambeFrame);         // demodulate C1
+	interleave((uint8_t *)ambeFrame, outAmbe72);                      // Re-interleave it, returning 72 bits
+
+}
+
+
+
+

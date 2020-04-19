@@ -35,7 +35,7 @@ void processDMRVoiceFrame(uint8_t * data)
 
 	//copy halves
 	uint8_t n1 = data[13] & 0xF0;
-	uint8_t n2 = data[19] & 0xF0;
+	uint8_t n2 = data[19] & 0x0F;
 	frameData[13] = n1 | n2;
 
 	//copy last 13

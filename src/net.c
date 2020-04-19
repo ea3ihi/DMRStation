@@ -29,6 +29,8 @@ uint16_t timeoutInactivity;
 uint32_t salt;
 uint32_t ticks;
 
+dmr_control_struct_t dmr_tx_control;
+
 guint netTimeout;
 
 volatile enum DMR_STATUS dmrnet_status = WAITING_CONNECT;
@@ -38,6 +40,12 @@ extern AppSettingsStruct_t settings;
 static const uint8_t VOICE_LC_SYNC_FULL[]       = { 0x04U, 0x6DU, 0x5DU, 0x7FU, 0x77U, 0xFDU, 0x75U, 0x7EU, 0x30U };
 static const uint8_t TERMINATOR_LC_SYNC_FULL[]  = { 0x04U, 0xADU, 0x5DU, 0x7FU, 0x77U, 0xFDU, 0x75U, 0x79U, 0x60U };
 static const uint8_t LC_SYNC_MASK_FULL[]        = { 0x0FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xF0U };
+
+
+const unsigned char SILENCE_FRAME[] = {
+							0xB9U, 0xE8U, 0x81U, 0x52U, 0x61U, 0x73U, 0x00U, 0x2AU, 0x6BU, 0xB9U, 0xE8U,
+							0x81U, 0x52U, 0x60U, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U, 0x01U, 0x73U, 0x00U,
+							0x2AU, 0x6BU, 0xB9U, 0xE8U, 0x81U, 0x52U, 0x61U, 0x73U, 0x00U, 0x2AU, 0x6BU};
 
 void net_init(void)
 {
@@ -169,6 +177,8 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 
 											ui_dmr_start(src, dst, 1);
 										}
+
+										processDMRVoiceFrame(RxData + 20);
 									}
 									else if (frameType == DATA_SYNC)
 									{
@@ -354,19 +364,31 @@ bool writeLogin(void)
 void activateTG(uint32_t src, uint32_t dst){
 
 	uint8_t dmrData[53] = {0};
+	uint8_t seq = 1;
 
-	//send VOICE HEADER
-	createVoiceHeader(src, dst, dmrData, 1);
+	uint32_t streamid = rand() +1;
+
+	//send VOICE HEADER x 2
+	createVoiceHeader(src, dst, dmrData, seq++, streamid);
+	network_send(dmrData, 53);
 	network_send(dmrData, 53);
 
-	//send some empty audio?
+	//send some empty
 
-	//send VOICE TERMINATOR
-	createVoiceTerminator(src, dst, dmrData, 2);
+	for (int i = 0; i<6; i++)
+	{
+		createSilenceFrame(src, dst, dmrData, seq++, streamid, i);
+		network_send(dmrData, 53);
+	}
+
+	//send VOICE TERMINATOR x 2
+	createVoiceTerminator(src, dst, dmrData, seq++, streamid);
+	network_send(dmrData, 53);
+	createVoiceTerminator(src, dst, dmrData, seq++, streamid);
 	network_send(dmrData, 53);
 }
 
-void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq)
+void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId)
 {
 	uint8_t dmrData[53] = {0};
 	uint8_t *p;
@@ -401,7 +423,6 @@ void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq
 	dmrData[15]= 0xA1; //data2 frame 2 group call slot 0 voice header
 
 	//StreamId
-	uint32_t streamId = src+dst;
 	dmrData[16]= (streamId >> 24) & 0xFF;
 	dmrData[17]= (streamId >> 16) & 0xFF;
 	dmrData[18]= (streamId >> 8) & 0xFF;
@@ -431,7 +452,7 @@ void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq
 
 }
 
-void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq)
+void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId)
 {
 	uint8_t dmrData[53] = {0};
 	uint8_t *p;
@@ -466,7 +487,6 @@ void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t
 	dmrData[15]= 0xA2; //data2 frame 2 group call slot 0 voice terminator
 
 	//StreamId
-	uint32_t streamId = src+dst;
 	dmrData[16]= (streamId >> 24) & 0xFF;
 	dmrData[17]= (streamId >> 16) & 0xFF;
 	dmrData[18]= (streamId >> 8) & 0xFF;
@@ -496,4 +516,169 @@ void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t
 
 }
 
+void createSilenceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId, uint8_t voiceSeq)
+{
+	uint8_t dmrData[53] = {0};
+	uint8_t *p;
+
+	dmrData[0] = 'D';
+	dmrData[1] = 'M';
+	dmrData[2] = 'R';
+	dmrData[3] = 'D';
+
+	dmrData[4] = seq;
+
+	//src
+	p = (uint8_t *) &src;
+	dmrData[5]= (uint8_t) p[2];
+	dmrData[6]= (uint8_t) p[1];
+	dmrData[7]= (uint8_t) p[0];
+
+	//dst
+	p = (uint8_t *) &dst;
+	dmrData[8]= (uint8_t) p[2];
+	dmrData[9]= (uint8_t) p[1];
+	dmrData[10]= (uint8_t) p[0];
+
+	//repeaterid
+	p = (uint8_t *) &settings.repeaterId;
+	dmrData[11]= (uint8_t) p[3];
+	dmrData[12]= (uint8_t) p[2];
+	dmrData[13]= (uint8_t) p[1];
+	dmrData[14]= (uint8_t) p[0];
+
+	//bit fields
+	voiceSeq = voiceSeq & 0x0F;
+	if (voiceSeq == 0)
+	{
+		voiceSeq = 0x10;
+	}
+	dmrData[15]= 0x80 + voiceSeq;
+
+	//StreamId
+	dmrData[16]= (streamId >> 24) & 0xFF;
+	dmrData[17]= (streamId >> 16) & 0xFF;
+	dmrData[18]= (streamId >> 8) & 0xFF;
+	dmrData[19]= (streamId >> 0) & 0xFF;
+
+	//Silence Data
+	memcpy(&dmrData[20], SILENCE_FRAME, 33);
+
+	memcpy(dataOut, dmrData, 53);
+
+}
+
+
+
+void prepareVoiceFrame( uint8_t * ambe72Data)
+{
+	uint8_t dmrData[53];
+
+	createVoiceFrame(settings.dmrId,
+				dmr_tx_control.destination,
+				dmrData,
+				dmr_tx_control.DMRSequence,
+				dmr_tx_control.streamId,
+				dmr_tx_control.voiceSequence,
+				ambe72Data);
+
+	dmr_tx_control.voiceSequence++;
+	dmr_tx_control.voiceSequence %= 15;
+
+	dmr_tx_control.DMRSequence++;
+
+	network_send(dmrData, 53);
+
+	//test
+	processDMRVoiceFrame(dmrData + 20);
+}
+
+void createVoiceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId, uint8_t voiceSeq, uint8_t * ambe72Data)
+{
+	uint8_t dmrData[53] = {0};
+	uint8_t *p;
+
+	dmrData[0] = 'D';
+	dmrData[1] = 'M';
+	dmrData[2] = 'R';
+	dmrData[3] = 'D';
+
+	dmrData[4] = seq;
+
+	//src
+	p = (uint8_t *) &src;
+	dmrData[5]= (uint8_t) p[2];
+	dmrData[6]= (uint8_t) p[1];
+	dmrData[7]= (uint8_t) p[0];
+
+	//dst
+	p = (uint8_t *) &dst;
+	dmrData[8]= (uint8_t) p[2];
+	dmrData[9]= (uint8_t) p[1];
+	dmrData[10]= (uint8_t) p[0];
+
+	//repeaterid
+	p = (uint8_t *) &settings.repeaterId;
+	dmrData[11]= (uint8_t) p[3];
+	dmrData[12]= (uint8_t) p[2];
+	dmrData[13]= (uint8_t) p[1];
+	dmrData[14]= (uint8_t) p[0];
+
+	//bit fields
+	voiceSeq = voiceSeq & 0x0F;
+	if (voiceSeq == 0)
+	{
+		voiceSeq = 0x10;
+	}
+	dmrData[15]= 0x80 + voiceSeq;
+
+	//StreamId
+	dmrData[16]= (streamId >> 24) & 0xFF;
+	dmrData[17]= (streamId >> 16) & 0xFF;
+	dmrData[18]= (streamId >> 8) & 0xFF;
+	dmrData[19]= (streamId >> 0) & 0xFF;
+
+	//13 first bytes
+	memcpy(&dmrData[20], ambe72Data, 13);
+
+	//half bytes
+	dmrData[33] = ambe72Data[13] & 0xF0;
+	dmrData[39] |= ambe72Data[13] & 0xF0;
+
+	//last 13;
+	memcpy(&dmrData[40], &ambe72Data[14], 13);
+
+
+	memcpy(dataOut, dmrData, 53);
+}
+
+
+void dmr_start_tx(void)
+{
+	uint8_t dmrData[53];
+	dmr_tx_control.streamId = rand()+1;
+	dmr_tx_control.voiceSequence=0;
+	dmr_tx_control.DMRSequence=0;
+	dmr_tx_control.destination = settings.currentTG;
+
+	createVoiceHeader(settings.dmrId,
+				dmr_tx_control.destination,
+				dmrData,
+				dmr_tx_control.DMRSequence++,
+				dmr_tx_control.streamId);
+	network_send(dmrData, 53);
+}
+
+
+
+dmr_stop_tx()
+{
+	uint8_t dmrData[53];
+	createVoiceTerminator(settings.dmrId,
+					dmr_tx_control.destination,
+					dmrData,
+					dmr_tx_control.DMRSequence,
+					dmr_tx_control.streamId);
+	network_send(dmrData, 53);
+}
 

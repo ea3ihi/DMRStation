@@ -16,6 +16,14 @@ enum DMR_STATUS {
 		RUNNING
 	};
 
+//Structure to work with tx parameters
+typedef struct dmr_control_struct {
+	uint8_t DMRSequence;
+	uint8_t voiceSequence;
+	uint32_t streamId;
+	uint32_t destination;
+} dmr_control_struct_t;
+
 gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data);
 void net_init(void);
 void net_deinit(void);
@@ -30,7 +38,12 @@ bool writeConfig(void);
 bool writePing(void);
 gboolean network_tick(void);
 void activateTG(uint32_t src, uint32_t dst);
-void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq);
-void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq);
+void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId);
+void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId);
+void createSilenceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId, uint8_t voiceSeq);
+void createVoiceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq, uint32_t streamId, uint8_t voiceSeq, uint8_t * ambe72Data);
+void prepareVoiceFrame( uint8_t * ambe72Data);
+void dmr_start_tx(void);
+void dmr_stop_tx(void);
 
 #endif

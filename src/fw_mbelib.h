@@ -29,4 +29,6 @@ int mbe_eccAmbe3600x2450Data (char ambe_fr[4][24], char *ambe_d);
 void mbe_demodulateAmbe3600x2450Data (char ambe_fr[4][24]);
 void prepare_framedata(uint8_t *indata, char *ambe_d, int *errs, int *errs2);
 
+void interleave(uint8_t *ambe_fr, uint8_t *dataOut);
+void convert49BitAmbeTo72BitFrames(uint8_t *inAmbe49bits, uint8_t *ambe_frOut);
 #endif /* _FW_MBELIB_H_ */

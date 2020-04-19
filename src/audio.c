@@ -223,7 +223,7 @@ void pa_record_stream_request_function(pa_stream *p, size_t nbytes, void *userda
 
 	if (nbytes >= 320*3){
 
-		if (pa_stream_peek(audio_record_stream, &data, &len) < 0)
+		if (pa_stream_peek(audio_record_stream, (const void **)&data, &len) < 0)
 		{
 			g_print("Get data error");
 		}
@@ -296,16 +296,18 @@ void context_state_callback(pa_context *c, void *userdata) {
 
 			audio_record_stream = pa_stream_new (ctxt, "DMRIn", &ss, NULL);
 
+			pa_stream_set_read_callback	(audio_record_stream,
+										pa_record_stream_request_function,
+										NULL
+										);
+
 			pa_stream_connect_record  (audio_record_stream,
 							NULL,
 							&buffer_record_attr,
 							PA_STREAM_START_CORKED
 							);
 
-			pa_stream_set_read_callback	(audio_record_stream,
-							pa_record_stream_request_function,
-							NULL
-							);
+
 
 			break;
 	  }
@@ -342,6 +344,10 @@ void stream_cork_cb(pa_stream *s, int success, void *userdata)
 	if (success)
 	{
 		g_print("cork\n");
+	}
+	else
+	{
+		g_print("cork error\n");
 	}
 
 }
