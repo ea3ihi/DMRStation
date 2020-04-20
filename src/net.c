@@ -415,6 +415,9 @@ bool writeLogin(void)
 
 void activateTG(uint32_t src, uint32_t dst){
 
+	ui_set_tg(dst);
+	settings.currentTG = dst;
+
 	memset(dmrData, 0, 53);
 	uint8_t seq = 1;
 

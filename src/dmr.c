@@ -22,6 +22,7 @@ DMRStatus_t getDMRStatus()
 void setDMRStatus(DMRStatus_t status)
 {
 	dmr_control.dmr_status = status;
+	g_print("DMR status %d\n", status);
 }
 
 /**

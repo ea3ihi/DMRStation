@@ -17,10 +17,10 @@ void setDefaultSettings(void)
 	settings.initialTG = 21460;
 
 	//local
-	strcpy((char *) settings.remoteHost, (char *) "192.168.3.254");
+	//strcpy((char *) settings.remoteHost, (char *) "192.168.3.254");
 
 	//My server on the net
-	//strcpy((char *) settings.remoteHost, (char *) "87.98.228.225");
+	strcpy((char *) settings.remoteHost, (char *) "87.98.228.225");
 
 	//Master spain
 	//strcpy((char *) settings.remoteHost, (char *) "84.232.5.113");

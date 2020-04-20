@@ -3,7 +3,7 @@
 #include "main.h"
 
 
-#define MAX_LH_ROWS 12
+#define MAX_LH_ROWS 24
 
 enum
 {

@@ -18,6 +18,9 @@
     <property name="hide_titlebar_when_maximized">True</property>
     <property name="decorated">False</property>
     <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -33,7 +36,7 @@
                 <property name="height_request">60</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">OpenDMR</property>
+                <property name="label" translatable="yes">TG123456</property>
                 <property name="justify">center</property>
                 <property name="single_line_mode">True</property>
                 <property name="yalign">0.49000000953674316</property>
@@ -54,7 +57,7 @@
                 <property name="height_request">30</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">EA3IHI David</property>
+                <property name="label" translatable="yes">1234567</property>
                 <attributes>
                   <attribute name="font-desc" value="&lt;Enter Value&gt; 20"/>
                 </attributes>
@@ -82,7 +85,7 @@
               <object class="GtkButton" id="button4000">
                 <property name="label" translatable="yes">4000</property>
                 <property name="name">button4000</property>
-                <property name="width_request">280</property>
+                <property name="width_request">130</property>
                 <property name="height_request">60</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -124,6 +127,21 @@
                 <property name="y">200</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkButton" id="buttonManualTG">
+                <property name="label" translatable="yes">#</property>
+                <property name="name">buttonManualTG</property>
+                <property name="width_request">130</property>
+                <property name="height_request">60</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="x">160</property>
+                <property name="y">140</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -137,12 +155,21 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
-              <object class="GtkTreeView" id="treeTG">
-                <property name="name">treeTG</property>
+              <object class="GtkScrolledWindow" id="scrollTG">
+                <property name="name">scrollTG</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                <property name="hscrollbar_policy">never</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkTreeView" id="treeTG">
+                    <property name="name">treeTG</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection"/>
+                    </child>
+                  </object>
                 </child>
               </object>
             </child>
@@ -160,15 +187,24 @@
               </packing>
             </child>
             <child>
-              <object class="GtkTreeView" id="treeLH">
-                <property name="name">treeLH</property>
+              <object class="GtkScrolledWindow" id="scrollLH">
+                <property name="name">scrollLH</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="headers_clickable">False</property>
-                <property name="enable_search">False</property>
-                <property name="enable_grid_lines">horizontal</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                <property name="hscrollbar_policy">never</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkTreeView" id="treeLH">
+                    <property name="name">treeLH</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="headers_clickable">False</property>
+                    <property name="enable_search">False</property>
+                    <property name="enable_grid_lines">horizontal</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection"/>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>
@@ -200,14 +236,14 @@
                     <property name="name">labelInfo</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">OpenDMR Network Radio
+                    <property name="label" translatable="yes">DMR Station
 By EA3IHI
 
-version 0.1</property>
+Version 0.6</property>
                     <property name="wrap">True</property>
                     <property name="track_visited_links">False</property>
                     <attributes>
-                      <attribute name="font-desc" value="Sans 20"/>
+                      <attribute name="font-desc" value="Sans 26"/>
                     </attributes>
                   </object>
                   <packing>

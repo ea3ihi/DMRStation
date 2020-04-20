@@ -29,6 +29,14 @@
 	text-shadow: none;
 }
 
+#buttonManualTG {
+	background: #00A000;
+	font-weight: bold;
+    font-size: 24px;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
 #buttonExit {
 	background: #E00000;
 	font-weight: bold;
@@ -42,7 +50,7 @@
 }
 
 #treeTG {
-	background: #A8FFB8;
+	//background: #A8FFB8;
 	font-size:40px;
 	color: black;
 	border-bottom: 1px solid #333333;
@@ -65,6 +73,14 @@ treeview.view header button {
 	font-size:32px;
 	color: black;
 }
+
+#treeTG.view :selected {
+	color: #FFFFFF ; background-color: #999999;
+	}
+	
+#treeTG.view :not(selected) {
+	background-color: #A8FFB8;
+	}
 
 #buttonPTT
 {
