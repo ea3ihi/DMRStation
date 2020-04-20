@@ -15,9 +15,7 @@
 	background: red;
 }
 
-#treeTG {
-	background: green;
-}
+
 
 #textInfo {
 	background: #DAFF7F
@@ -39,14 +37,22 @@
 }
 
 #sliderVolume slider{
-	min-width: 30px;                                                                               
+	min-width: 36px;                                                                               
 	min-height: 30px;                                                                               
+}
+
+#treeTG {
+	background: #A8FFB8;
+	font-size:40px;
+	color: black;
+	border-bottom: 1px solid #333333;
 }
 
 #treeLH {
 	background: #7FC9FF;
-	font-size:28px;
+	font-size:30px;
 	color: black;
+	border-bottom: 1px solid #333333;
 }
 
 #labelInfo {
@@ -56,7 +62,7 @@
 treeview.view header button {
 	border: 1px solid #303030;
 	background: #7FC9FF;
-	font-size:30px;
+	font-size:32px;
 	color: black;
 }
 

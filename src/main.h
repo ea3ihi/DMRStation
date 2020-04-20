@@ -22,6 +22,7 @@
 #include "audio.h"
 #include "ambe_client.h"
 #include "lastheard.h"
+#include "talkgroup.h"
 
 
 void ui_dmr_start(uint32_t src, uint32_t dst, uint8_t type);

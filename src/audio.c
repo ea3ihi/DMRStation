@@ -11,7 +11,7 @@
 //#define ADJUST_LATENCY	1
 
 #define PCM_AUDIO_FRAMES	3 //Frames to have to send to ambe
-#define RECORD_BUFFER_SIZE	8000*2*5 // Buffer up to 5 seconds of audio
+#define RECORD_BUFFER_SIZE	8000*2*5 // Buffer up to 3 seconds of audio
 #define RECORD_BUFFER_ATTR_FRAG_SIZE	320*4;
 
 #define AUDIO_TICK_INTERVAL	60	//ms
@@ -65,10 +65,10 @@ void audioBufferWrite(const uint8_t *data, uint32_t size)
 		audioBufferCount += size;
 		audioBufferWriteIndex += size;
 		audioBufferWriteIndex %= RECORD_BUFFER_SIZE;
-		g_printf("Adding %d total %d\n", size, audioBufferCount);
+		//g_printf("Adding %d total %d\n", size, audioBufferCount);
 	}
 	else {
-		g_printf("Audio buffer overrun\n");
+		//g_printf("Audio buffer overrun\n");
 	}
 
 	//audio_tick();
@@ -92,7 +92,7 @@ uint32_t audioReadBuffer(uint8_t *data, uint32_t size)
 		audioBufferReadIndex += size;
 		audioBufferReadIndex %= RECORD_BUFFER_SIZE;
 		audioBufferCount -= size;
-		g_printf("Reading %d total %d\n", size, audioBufferCount);
+		//g_printf("Reading %d total %d\n", size, audioBufferCount);
 	}
 
 	//TODO: read available instead of 0
