@@ -1,10 +1,12 @@
 
 
-#include <pulse/context.h>
+
 
 
 #define AUDIO_BUFFERS	0
 #define AUDIO_BUFFER_SIZE	160	//in samples, not bytes
+
+#include <pulse/context.h>
 
 void audio_init(void);
 void audio_deinit(void);

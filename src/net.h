@@ -23,6 +23,8 @@ typedef struct dmr_control_struct {
 	uint32_t streamId;
 	uint32_t destination;
 	DMRStatus_t dmr_status;
+	uint32_t lastSrc;
+	uint32_t lastDst;
 } dmr_control_struct_t;
 
 gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data);

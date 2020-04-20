@@ -12,9 +12,6 @@ enum
    N_COLUMNS
 };
 
-uint32_t lastSrc = 0;
-uint32_t lastDst = 0;
-
 GtkTreeIter   lhiter;
 GtkTreeStore *lhstore;
 

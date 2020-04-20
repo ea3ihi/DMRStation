@@ -8,8 +8,7 @@
 #include "dmr/DMRSlotType.h"
 #include "dmr/QR1676.h"
 
-extern uint32_t lastSrc;
-extern uint32_t lastDst;
+
 
 GSocket *socket;
 
@@ -30,7 +29,7 @@ uint16_t timeoutInactivity;
 uint32_t salt;
 uint32_t ticks;
 
-dmr_control_struct_t dmr_tx_control;
+dmr_control_struct_t dmr_control;
 
 guint netTimeout;
 
@@ -278,9 +277,9 @@ gboolean network_tick(void)
 	if (dmrnet_status == RUNNING)
 	{
 		timeoutInactivity++;
-		if (timeoutInactivity >= INACTIVITY_TICKS && lastSrc != 0)
+		if (timeoutInactivity >= INACTIVITY_TICKS && dmr_control.lastSrc != 0)
 		{
-			lastSrc = 0;
+			dmr_control.lastSrc = 0;
 			timeoutInactivity = 0;
 			ui_dmr_stop(0, 0, 1);
 		}
@@ -630,17 +629,17 @@ void prepareVoiceFrame( uint8_t * ambe72Data)
 	memset(dmrData, 0, 53);
 
 	createVoiceFrame(settings.dmrId,
-				dmr_tx_control.destination,
+				dmr_control.destination,
 				dmrData,
-				dmr_tx_control.DMRSequence,
-				dmr_tx_control.streamId,
-				dmr_tx_control.voiceSequence,
+				dmr_control.DMRSequence,
+				dmr_control.streamId,
+				dmr_control.voiceSequence,
 				ambe72Data);
 
-	dmr_tx_control.voiceSequence++;
-	dmr_tx_control.voiceSequence %= 6;
+	dmr_control.voiceSequence++;
+	dmr_control.voiceSequence %= 6;
 
-	dmr_tx_control.DMRSequence++;
+	dmr_control.DMRSequence++;
 
 	//network_send(dmrData, 53);
 	writeDMRQueue((uint8_t *) dmrData);
@@ -715,17 +714,17 @@ void dmr_start_tx(void)
 {
 	flushDMRQueue();
 
-	dmr_tx_control.streamId = rand()+1;
-	dmr_tx_control.voiceSequence=0;
-	dmr_tx_control.DMRSequence=0;
-	dmr_tx_control.destination = settings.currentTG;
-	dmr_tx_control.dmr_status = DMR_STATUS_TX;
+	dmr_control.streamId = rand()+1;
+	dmr_control.voiceSequence=0;
+	dmr_control.DMRSequence=0;
+	dmr_control.destination = settings.currentTG;
+	dmr_control.dmr_status = DMR_STATUS_TX;
 
 	createVoiceHeader(settings.dmrId,
-				dmr_tx_control.destination,
+				dmr_control.destination,
 				dmrData,
-				dmr_tx_control.DMRSequence++,
-				dmr_tx_control.streamId);
+				dmr_control.DMRSequence++,
+				dmr_control.streamId);
 	//network_send(dmrData, 53);
 	writeDMRQueue((uint8_t *) dmrData);
 }
@@ -735,14 +734,14 @@ void dmr_start_tx(void)
 void dmr_stop_tx(void)
 {
 	g_printf("dmr_stop_tx\n");
-	dmr_tx_control.dmr_status = DMR_STATUS_IDLE;
+	dmr_control.dmr_status = DMR_STATUS_IDLE;
 
 
 	createVoiceTerminator(settings.dmrId,
-					dmr_tx_control.destination,
+					dmr_control.destination,
 					dmrData,
-					dmr_tx_control.DMRSequence,
-					dmr_tx_control.streamId);
+					dmr_control.DMRSequence,
+					dmr_control.streamId);
 	//network_send(dmrData, 53);
 	writeDMRQueue((uint8_t *) dmrData);
 }
