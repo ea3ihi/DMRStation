@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/com/ea3ihi/openDMR">
-    <file preprocess="xml-stripblanks">OpenDMR.glade</file>
+  <gresource prefix="/application/ui">
+    <file preprocess="xml-stripblanks">DMRStation.glade</file>
 	<file>styles.css</file>
   </gresource>
 </gresources>

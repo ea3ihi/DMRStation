@@ -104,7 +104,7 @@ int main (int argc, char **argv)
 	//convert49BitTo72BitAMBE(ambe49, ambe72);
 	//expected result: {0xAC, 0xAA, 0x40, 0x20, 0x00, 0x44, 0x40, 0x80, 0x80)
 
-	g_set_application_name("OpenDMR network radio");
+	g_set_application_name("DMRStation network radio");
 	gtk_window_set_default_icon_name("DMR");
 	g_setenv("PULSE_PROP_media.role", "phone", TRUE);
 
@@ -121,7 +121,7 @@ int main (int argc, char **argv)
 	GError * error = NULL;
 
 	builder = gtk_builder_new();
-	gtk_builder_add_from_resource (builder, "/com/ea3ihi/openDMR/OpenDMR.glade", &error);
+	gtk_builder_add_from_resource (builder, "/application/ui/DMRStation.glade", &error);
 
 	window = GTK_WIDGET(gtk_builder_get_object(builder, "mainWindow"));
 
@@ -265,7 +265,7 @@ css_parse_error (GtkCssProvider *provider,
                gpointer        user_data)
 {
 
-	g_print("CSS parsing error\n");
+	g_print("CSS parse error in line %d\n", gtk_css_section_get_start_line (section));
 }
 void init_CSS(void)
 {
@@ -294,7 +294,7 @@ void init_CSS(void)
                                      &error);*/
 
     g_signal_connect(provider, "parsing-error", G_CALLBACK(css_parse_error), NULL);
-    gtk_css_provider_load_from_resource (provider, "/com/ea3ihi/openDMR/styles.css");
+    gtk_css_provider_load_from_resource (provider, "/application/ui/styles.css");
 
     g_object_unref (provider);
 }
