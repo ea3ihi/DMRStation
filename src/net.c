@@ -703,11 +703,24 @@ void createVoiceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq,
 
 	//half bytes
 	dmrData[33] = ambe72Data[13] & 0xF0;
-	dmrData[39] |= ambe72Data[13] & 0xF0;
+	dmrData[39] |= ambe72Data[13] & 0x0F;
 
 	//last 13;
 	memcpy(&dmrData[40], &ambe72Data[14], 13);
 
+	//TODO: talk alias EMB, other syncs...
+	//SYNC MASK
+	switch (voiceSeq)
+	{
+		case 0:
+			for (int i = 0; i<7; i++)
+			{
+				dmrData[20 + 13 + i] |= MS_SOURCED_AUDIO_SYNC[i];
+			}
+			break;
+		default:
+			break;
+	}
 
 	//memcpy(dataOut, dmrData, 53);
 }

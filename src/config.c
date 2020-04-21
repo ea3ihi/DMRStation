@@ -20,10 +20,10 @@ void setDefaultSettings(void)
 	//strcpy((char *) settings.remoteHost, (char *) "192.168.3.254");
 
 	//My server on the net
-	strcpy((char *) settings.remoteHost, (char *) "87.98.228.225");
+	//strcpy((char *) settings.remoteHost, (char *) "87.98.228.225");
 
 	//Master spain
-	//strcpy((char *) settings.remoteHost, (char *) "84.232.5.113");
+	strcpy((char *) settings.remoteHost, (char *) "84.232.5.113");
 
 	strcpy((char *) settings.password, (char *) "passw0rd");
 	strcpy((char *) settings.callsign, (char *) "EA3IHI");
