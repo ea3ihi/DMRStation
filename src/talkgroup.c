@@ -70,6 +70,14 @@ void talkgroup_init(void)
 	//test data
 	talkgroupData_t tg;
 
+	tg.id=4000;
+	g_snprintf((gchar *) &tg.name, TGNAME_SIZE, "Disconnect");
+	talkgroupAdd(&tg);
+
+	tg.id=9990;
+	g_snprintf((gchar *) &tg.name, TGNAME_SIZE, "Parrot");
+	talkgroupAdd(&tg);
+
 	tg.id=91;
 	g_snprintf((gchar *) &tg.name, TGNAME_SIZE, "World");
 	talkgroupAdd(&tg);
@@ -114,9 +122,21 @@ void talkgroup_init(void)
 					  G_CALLBACK (tg_selection_changed_cb),
 		                  NULL);
 
-	GtkTreePath *path = gtk_tree_path_new_from_indices(4, -1);
+	talkgroup_select_by_index(6);
+
+	/*GtkTreePath *path = gtk_tree_path_new_from_indices(4, -1);
 	gtk_tree_selection_select_path(tgselect, path);
 	gtk_tree_path_free(path);
+	*/
+
+}
+
+void talkgroup_select_by_index(int index)
+{
+	GtkTreePath *path = gtk_tree_path_new_from_indices(index, -1);
+	gtk_tree_selection_select_path(tgselect, path);
+	gtk_tree_path_free(path);
+
 }
 
 

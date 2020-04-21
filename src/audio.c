@@ -432,7 +432,7 @@ void context_state_callback(pa_context *c, void *userdata) {
 			buffer_attr.maxlength = -1;
 			buffer_attr.minreq = 3*320 * 2; //; //320
 			buffer_attr.tlength = -1;
-			buffer_attr.prebuf = -1; //3*320 * 16
+			buffer_attr.prebuf = 3*320*5; //-1; //3*320 * 16
 
 			pa_stream_connect_playback	(audio_stream,
 				NULL, //"alsa_output.usb-Logitech_Logitech_USB_Headset-00.analog-stereo",

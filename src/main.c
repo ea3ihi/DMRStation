@@ -35,8 +35,8 @@ void
 onButton4000Click (GtkButton *button,
                gpointer   user_data)
 {
-	uint32_t tmp = settings.currentTG;
 	activateTG(settings.dmrId, 4000);
+	void talkgroup_select_by_index(int index);
 	settings.currentTG = 0;
 	ui_set_tg(settings.currentTG);
 }
@@ -158,8 +158,6 @@ int main (int argc, char **argv)
 
 	gtk_range_set_value ( GTK_RANGE(sliderVolume),
 	                     30.0);
-
-
 	init_CSS();
 	net_init();
 
