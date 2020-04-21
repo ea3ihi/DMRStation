@@ -35,8 +35,10 @@ void
 onButton4000Click (GtkButton *button,
                gpointer   user_data)
 {
-
+	uint32_t tmp = settings.currentTG;
 	activateTG(settings.dmrId, 4000);
+	settings.currentTG = 0;
+	ui_set_tg(settings.currentTG);
 }
 
 void
@@ -181,6 +183,11 @@ void ui_set_tg(uint32_t tg)
 {
 	gchar str[30] ={0};
 	g_snprintf(str, 30, "TG %d", tg);
+	if (tg == 0)
+	{
+		gtk_label_set_text (GTK_LABEL(labelTG), "");
+		return;
+	}
 	gtk_label_set_text (GTK_LABEL(labelTG), (gchar *) str);
 }
 

@@ -27,7 +27,6 @@ bool loadConfigFile(void)
 		return false;
     }
 
-
 	g_autofree gchar *val;
 	//user data
 	val = g_key_file_get_string (key_file, "user", "callsign", &error);
