@@ -11,10 +11,10 @@
 //#define ADJUST_LATENCY	1
 
 #define PCM_AUDIO_FRAMES	3 //Frames to have to send to ambe
-#define RECORD_BUFFER_SIZE	8000*2*5 // Buffer up to 3 seconds of audio
-#define RECORD_BUFFER_ATTR_FRAG_SIZE	320*4;
+#define RECORD_BUFFER_SIZE	8000*2*5 // Buffer up to 5 seconds of audio
+#define RECORD_BUFFER_ATTR_FRAG_SIZE	320*4
 
-#define AUDIO_RECEPTION_BUFFER	3*320*5;
+#define AUDIO_IN_PREBUFFER	3*320*5
 
 #define AUDIO_TICK_INTERVAL	60	//ms
 
@@ -432,7 +432,7 @@ void context_state_callback(pa_context *c, void *userdata) {
 			buffer_attr.maxlength = -1;
 			buffer_attr.minreq = 3*320 * 2; //; //320
 			buffer_attr.tlength = -1;
-			buffer_attr.prebuf = 3*320*5; //-1; //3*320 * 16
+			buffer_attr.prebuf = AUDIO_IN_PREBUFFER; //-1
 
 			pa_stream_connect_playback	(audio_stream,
 				NULL, //"alsa_output.usb-Logitech_Logitech_USB_Headset-00.analog-stereo",

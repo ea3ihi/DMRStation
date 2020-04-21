@@ -25,6 +25,8 @@ typedef struct dmr_control_struct {
 	DMRStatus_t dmr_status;
 	uint32_t lastSrc;
 	uint32_t lastDst;
+
+	GTimer			*timerTOT;
 } dmr_control_struct_t;
 
 gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data);

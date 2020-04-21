@@ -59,6 +59,8 @@ void onButtonPTT(GtkToggleButton *togglebutton,
 {
 	if (gtk_toggle_button_get_active (togglebutton))
 	{
+		g_timer_start(dmr_control.timerTOT);
+
 		gtk_widget_show(GTK_WIDGET(labelTT));
 
 		lastHeardData_t lh;
@@ -77,7 +79,9 @@ void onButtonPTT(GtkToggleButton *togglebutton,
 	else
 	{
 		audio_record_stop();
+		g_timer_stop(dmr_control.timerTOT);
 
+		gtk_label_set_text (GTK_LABEL(labelTT), "0");
 		gtk_widget_hide(labelTT);
 
 		/*
@@ -111,6 +115,8 @@ int main (int argc, char **argv)
 	g_setenv("PULSE_PROP_media.role", "phone", TRUE);
 
 	setDefaultSettings();
+
+	dmr_control.timerTOT = g_timer_new();
 
 	settings.currentTG = settings.initialTG;
 
@@ -183,7 +189,7 @@ void ui_set_tg(uint32_t tg)
 	g_snprintf(str, 30, "TG %d", tg);
 	if (tg == 0)
 	{
-		gtk_label_set_text (GTK_LABEL(labelTG), "");
+		gtk_label_set_text (GTK_LABEL(labelTG), " ");
 		return;
 	}
 	gtk_label_set_text (GTK_LABEL(labelTG), (gchar *) str);
@@ -304,3 +310,14 @@ void init_CSS(void)
     g_object_unref (provider);
 }
 
+void tickTOT(void)
+{
+	gchar buf[10];
+
+	gdouble tot = g_timer_elapsed (dmr_control.timerTOT, NULL);
+
+	g_snprintf(buf, 10 , "%d", (int) tot);
+
+	gtk_label_set_text (GTK_LABEL(labelTT), buf);
+
+}

@@ -95,7 +95,7 @@ void tick_DMRQueue(void)
 		readDMRQueue(data);
 		network_send(data, 53);
 	}
-
+	tickTOT();
 }
 
 void net_init(void)
