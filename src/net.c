@@ -54,6 +54,8 @@ volatile uint32_t DMROutBufferWriteIndex;
 volatile uint32_t DMROutBufferCount;
 uint8_t dmrOutBuffer[DMR_OUT_BUFFER_SIZE][53];
 
+uint8_t totcounter=0;
+
 void flushDMRQueue(void)
 {
 	DMROutBufferWriteIndex=0;
@@ -95,7 +97,12 @@ void tick_DMRQueue(void)
 		readDMRQueue(data);
 		network_send(data, 53);
 	}
-	tickTOT();
+
+	totcounter++;
+	if (totcounter > 10)
+	{
+		tickTOT();
+	}
 }
 
 void net_init(void)
