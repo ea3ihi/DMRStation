@@ -1,0 +1,98 @@
+#mainWindow {
+	background-color: #fafafa;
+}
+
+.blackbg {
+	background: black;
+} 
+
+
+.greenbg {
+	background: green;
+}
+
+.redbg {
+	background: red;
+}
+
+
+
+#textInfo {
+	background: #DAFF7F
+}
+
+#button4000 {
+	background: #F00000;
+	font-weight: bold;
+    font-size: 24px;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+#buttonManualTG {
+	background: #00A000;
+	font-weight: bold;
+    font-size: 24px;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+#buttonExit {
+	background: #E00000;
+	font-weight: bold;
+    font-size: 20px;
+	color: #FFFFFF;
+}
+
+#sliderVolume slider{
+	min-width: 36px;                                                                               
+	min-height: 30px;                                                                               
+}
+
+#treeTG {
+	//background: #A8FFB8;
+	font-size:40px;
+	color: black;
+	border-bottom: 1px solid #333333;
+}
+
+#treeLH {
+	background: #7FC9FF;
+	font-size:30px;
+	color: black;
+	border-bottom: 1px solid #333333;
+}
+
+#labelInfo {
+	background: #E2FFFF;
+}
+
+treeview.view header button {
+	border: 1px solid #303030;
+	background: #7FC9FF;
+	font-size:32px;
+	color: black;
+}
+
+#treeTG.view :selected {
+	color: #FFFFFF ; background-color: #999999;
+	}
+	
+#treeTG.view :not(selected) {
+	background-color: #A8FFB8;
+	}
+
+#buttonPTT
+{
+	color: white;
+	text-shadow: none;
+	font-size:20px;
+	font-weight: bold;
+	background: green;
+	border-radius: 80px;
+}
+#buttonPTT:checked {
+	background: #802020;
+}
+
+

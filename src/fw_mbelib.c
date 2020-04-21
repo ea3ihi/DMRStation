@@ -295,8 +295,6 @@ void mbe_demodulateAmbe3600x2450Data (char ambe_fr[4][24])
     }
 }
 
-
-
 void prepare_framedata(uint8_t *indata, char *ambe_d, int *errs, int *errs2)
 {
 	char ambe_fr[4][24];
@@ -329,3 +327,125 @@ void prepare_framedata(uint8_t *indata, char *ambe_d, int *errs, int *errs2)
     *errs2 += mbe_eccAmbe3600x2450Data (ambe_fr, ambe_d);
 }
 
+
+
+void interleave(uint8_t *ambe_fr, uint8_t *dataOut)
+{
+	int bitIndex = 0;
+	int	w = 0;
+	int x = 0;
+	int	y = 0;
+	int z = 0;
+	uint8_t bit0;
+	uint8_t bit1;
+
+	for (int i = 0; i<36; i++)
+	{
+		bit1 = ambe_fr[rW[w] * 24 + rX[x]]; // bit 1
+		bit0 = ambe_fr[rY[y] * 24 + rZ[z]]; // bit 0
+
+		dataOut[bitIndex >> 3] = ((dataOut[bitIndex >> 3] << 1) & 0xfe) | bit1;
+		bitIndex ++;
+
+		dataOut[bitIndex >> 3] = ((dataOut[bitIndex >> 3] << 1) & 0xfe) | bit0;
+		bitIndex++;
+
+		w++;
+		x++;
+		y++;
+		z++;
+	}
+}
+
+/**
+* This function checks the overall parity of codeword cw.
+* If parity is even, 0 is returned, else 1.
+**/
+
+int parity(int cw) {
+    /* XOR the bytes of the codeword */
+    int p = cw & 0xff;
+    p = p ^ ((cw >> 8) & 0xff);
+    p = p ^ ((cw >> 16) & 0xff);
+
+    /* XOR the halves of the intermediate result */
+    p = p ^ (p >> 4);
+    p = p ^ (p >> 2);
+    p = p ^ (p >> 1);
+
+    /* return the parity result */
+    return(p & 1);
+}
+
+/**
+* This function calculates [23,12] Golay codewords.
+* The format of the returned longint is [checkbits(11),data(12)].
+**/
+int golay2312word(int cw) {
+    int POLY = 0xAE3;            /* or use the other polynomial, 0xC75 */
+    cw = cw & 0x0fff;             // Strip off check bits and only use data
+    int c = cw;                      /* save original codeword */
+    for (int i = 1; i<13; i++) {
+                               /* examine each data bit */
+        if (cw & 1) {            /* test data bit */
+            cw = cw ^ POLY;      /* XOR polynomial */
+        }
+        cw = cw >> 1;            /* shift intermediate result */
+    }
+    return((cw << 12) | c);      /* assemble codeword */
+}
+
+void convert49BitAmbeTo72BitFrames(uint8_t *inAmbe49bits, uint8_t *ambe_frOut)
+{
+	//Place bits into the 4x24 frames.  [bit0...bit23]
+	//fr0: [P e10 e9 e8 e7 e6 e5 e4 e3 e2 e1 e0 11 10 9 8 7 6 5 4 3 2 1 0]
+	//fr1: [e10 e9 e8 e7 e6 e5 e4 e3 e2 e1 e0 23 22 21 20 19 18 17 16 15 14 13 12 xx]
+	//fr2: [34 33 32 31 30 29 28 27 26 25 24 x x x x x x x x x x x x x]
+	//fr3: [48 47 46 45 44 43 42 41 40 39 38 37 36 35 x x x x x x x x x x]
+
+	// ecc and copy C0: 12bits + 11ecc + 1 parity
+	// First get the 12 bits that actually exist
+	// Then calculate the golay codeword
+	// And then add the parity bit to get the final 24 bit pattern
+
+	int tmp = 0;
+
+	//grab the 12 MSB
+	for (int i = 11; i>-1; i--) {
+		tmp = (tmp << 1) | (inAmbe49bits[i] ? 1 : 0);
+	}
+
+	tmp = golay2312word(tmp);               //Generate the 23 bit result
+	int parityBit = parity(tmp);
+	tmp = tmp | (parityBit << 23);           //And create a full 24 bit value
+
+	for (int i = 23; i>-1; i--) {
+		ambe_frOut[i] = (tmp & 1);
+		tmp = tmp >> 1;
+	}
+
+	// C1: 12 bits + 11ecc (no parity)
+	tmp = 0;
+	//grab the next 12 bits
+	for (int i = 23; i>11; i--) {
+		tmp = (tmp << 1) | (inAmbe49bits[i] ? 1 : 0);
+	}
+
+	tmp = golay2312word(tmp);                    //Generate the 23 bit result
+
+	for (int j = 22; j>-1; j--) {
+		ambe_frOut[1*24 + j] =  tmp & 1;
+		tmp = tmp >> 1;
+	}
+
+	//C2: 11 bits (no ecc)
+	for (int j = 10; j>-1; j--) {
+		ambe_frOut[2*24 + j] = inAmbe49bits[34 - j];
+	}
+
+	//C3: 14 bits (no ecc)
+	for (int j = 13; j>-1; j--) {
+		ambe_frOut[3*24 + j] = inAmbe49bits[48 - j];
+	}
+
+}

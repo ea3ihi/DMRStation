@@ -10,6 +10,20 @@ char ambe_fr[4][24];
 uint8_t ambeBytes[7];
 char err_str[64];
 
+dmr_control_struct_t dmr_control;
+
+
+
+DMRStatus_t getDMRStatus()
+{
+	return dmr_control.dmr_status;
+}
+
+void setDMRStatus(DMRStatus_t status)
+{
+	dmr_control.dmr_status = status;
+	g_print("DMR status %d\n", status);
+}
 
 /**
  * Process the 33 bytes of DMR voice data
@@ -24,7 +38,7 @@ void processDMRVoiceFrame(uint8_t * data)
 
 	//copy halves
 	uint8_t n1 = data[13] & 0xF0;
-	uint8_t n2 = data[19] & 0xF0;
+	uint8_t n2 = data[19] & 0x0F;
 	frameData[13] = n1 | n2;
 
 	//copy last 13
