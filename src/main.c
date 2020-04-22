@@ -38,6 +38,7 @@ onButton4000Click (GtkButton *button,
 	activateTG(settings.dmrId, 4000);
 	void talkgroup_select_by_index(int index);
 	settings.currentTG = 0;
+	talkgroup_select_by_index(0);
 	ui_set_tg(settings.currentTG);
 }
 
@@ -122,7 +123,10 @@ int main (int argc, char **argv)
 
 	ambeclient_init();
 	audio_init();
+	dmrids_init();
+	//gpointer x = dmrids_lookup(2143827);
 
+	//x = dmrids_lookup(0);
 	//activateTG(2143827, 21463);
 
 	//g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
@@ -189,6 +193,7 @@ void ui_set_tg(uint32_t tg)
 	g_snprintf(str, 30, "TG %d", tg);
 	if (tg == 0)
 	{
+		g_print("TG is 0!\n");
 		gtk_label_set_text (GTK_LABEL(labelTG), " ");
 		return;
 	}
@@ -200,9 +205,7 @@ void ui_dmr_start(uint32_t src, uint32_t dst, uint8_t type)
 {
 	gchar str[30] ={0};
 
-	g_snprintf(str, 30, "TG %d", dst);
-
-	gtk_label_set_text (GTK_LABEL(labelTG), (gchar *) str);
+	ui_set_tg(dst);
 
 	g_snprintf(str, 30, "ID: %d", src);
 	gtk_label_set_text (GTK_LABEL(labelID), (gchar *) str);
@@ -221,14 +224,8 @@ void ui_dmr_start(uint32_t src, uint32_t dst, uint8_t type)
 
 void ui_dmr_stop(uint32_t src, uint32_t dst, uint8_t type)
 {
-	gchar str[30] ={0};
-
-	g_snprintf(str, 30, "TG %d", settings.currentTG);
-
-	gtk_label_set_text (GTK_LABEL(labelTG), (gchar *) str);
-
 	gtk_label_set_text (GTK_LABEL(labelID), "");
-
+	ui_set_tg(dst);
 }
 
 void ui_net_connection(uint8_t status)

@@ -14,7 +14,7 @@
 #define RECORD_BUFFER_SIZE	8000*2*5 // Buffer up to 5 seconds of audio
 #define RECORD_BUFFER_ATTR_FRAG_SIZE	320*4
 
-#define AUDIO_IN_PREBUFFER	3*320*5
+#define AUDIO_IN_PREBUFFER	3*320*8
 
 #define AUDIO_TICK_INTERVAL	60	//ms
 
