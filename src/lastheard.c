@@ -7,10 +7,10 @@
 
 enum
 {
-   CALLSIGN_COLUMN,
-   NAME_COLUMN,
+   LHCALLSIGN_COLUMN,
+   LHNAME_COLUMN,
    LH_TG_COLUMN,
-   N_COLUMNS
+   LHN_COLUMNS
 };
 
 GtkTreeIter   lhiter;
@@ -25,31 +25,41 @@ GtkTreeViewColumn *lhcolumnTG;
 
 void lastheard_init(void)
 {
-	lhstore = gtk_tree_store_new  (N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
+	lhstore = gtk_tree_store_new(LHN_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
 
 
 	gtk_tree_view_set_model (treeLH, GTK_TREE_MODEL(lhstore));
 
-	lhrenderer = gtk_cell_renderer_text_new ();
+	lhrenderer = gtk_cell_renderer_text_new();
 	lhcolumnCall = gtk_tree_view_column_new_with_attributes ("Call",
 	                                                   lhrenderer,
-	                                                   "text", CALLSIGN_COLUMN,
+	                                                   "text", LHCALLSIGN_COLUMN,
 	                                                   NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (treeLH), lhcolumnCall);
 
+	lhrenderer = gtk_cell_renderer_text_new();
 	lhcolumnName = gtk_tree_view_column_new_with_attributes ("Name",
 		                                                   lhrenderer,
-		                                                   "text", NAME_COLUMN,
+		                                                   "text", LHNAME_COLUMN,
 		                                                   NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (treeLH), lhcolumnName);
 
+	lhrenderer = gtk_cell_renderer_text_new();
 	lhcolumnTG = gtk_tree_view_column_new_with_attributes ("TG",
-			                                                   lhrenderer,
-			                                                   "text", LH_TG_COLUMN,
-			                                                   NULL);
-
+														   lhrenderer,
+														   "text", LH_TG_COLUMN,
+														   NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (treeLH), lhcolumnTG);
 
+
+	//test
+	/*lastHeardData_t lh = {
+			.tg=1234,
+			.call="CALL",
+			.name="NAME"
+	};
+	lastHeardAdd(&lh);
+	*/
 }
 
 
@@ -68,9 +78,9 @@ void lastHeardAdd(lastHeardData_t *data)
 	gtk_tree_store_insert ((GtkTreeStore *) lhstore, &lhiter, NULL, 0);  /* Acquire an iterator */
 
 	gtk_tree_store_set ((GtkTreeStore *) lhstore, &lhiter,
-				CALLSIGN_COLUMN, data->call,
-				NAME_COLUMN, data->name,
-				LH_TG_COLUMN, data->tg
+				LHCALLSIGN_COLUMN, data->call,
+				LHNAME_COLUMN, data->name,
+				LH_TG_COLUMN, data->tg,
 		        -1);
 
 	/* gtk_tree_view_scroll_to_point (GTK_TREE_VIEW (treeLH),
