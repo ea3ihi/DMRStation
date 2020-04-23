@@ -67,7 +67,16 @@ void talkgroup_init(void)
 		                                                   NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (treeTG), tgcolumnName);
 
-	//test data
+
+	//selection and signals
+	tgselect = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeTG));
+	gtk_tree_selection_set_mode (tgselect, GTK_SELECTION_SINGLE);
+	g_signal_connect (G_OBJECT (tgselect), "changed",
+					G_CALLBACK (tg_selection_changed_cb),
+					NULL);
+
+
+	//Fixed groups
 	talkgroupData_t tg;
 
 	tg.id=4000;
@@ -78,57 +87,47 @@ void talkgroup_init(void)
 	g_snprintf((gchar *) &tg.name, TGNAME_SIZE, "Parrot");
 	talkgroupAdd(&tg);
 
-	tg.id=91;
-	g_snprintf((gchar *) &tg.name, TGNAME_SIZE, "World");
-	talkgroupAdd(&tg);
+	talkgroups_load();
 
-	tg.id=214;
-	g_snprintf((gchar *) &tg.name, TGNAME_SIZE, "Spain");
-	talkgroupAdd(&tg);
+}
 
-	tg.id=21412;
-	g_snprintf((gchar *)&tg.name, TGNAME_SIZE, "Galicia");
-	talkgroupAdd(&tg);
+bool talkgroups_load(void)
+{
 
-	tg.id=21471;
-	g_snprintf((gchar *)&tg.name, TGNAME_SIZE, "Free 21471");
-	talkgroupAdd(&tg);
-
-	tg.id=21460;
-	g_snprintf((gchar *)&tg.name, TGNAME_SIZE, "Conf Catalana");
-	talkgroupAdd(&tg);
-
-	tg.id=2143;
-	g_snprintf((gchar *)&tg.name, TGNAME_SIZE, "Catalunya");
-	talkgroupAdd(&tg);
-
-	tg.id=21438;
-	g_snprintf((gchar *)&tg.name, TGNAME_SIZE, "Barcelona");
-	talkgroupAdd(&tg);
-
-	tg.id=21463;
-	g_snprintf((gchar *)&tg.name, TGNAME_SIZE, "Free 21463");
-	talkgroupAdd(&tg);
-
-	tg.id=21462;
-	g_snprintf((gchar *)&tg.name, TGNAME_SIZE, "Free 21462");
-	talkgroupAdd(&tg);
+	FILE *fp;
+	char buf[1024];
+	talkgroupData_t tg;
 
 
-	//selection and signals
-	tgselect = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeTG));
-	gtk_tree_selection_set_mode (tgselect, GTK_SELECTION_SINGLE);
-	g_signal_connect (G_OBJECT (tgselect), "changed",
-					  G_CALLBACK (tg_selection_changed_cb),
-		                  NULL);
+	fp = fopen ("tgs.dat", "r");
+	/* If file does not exist, exit. */
+	if (!fp)
+	{
+		return false;
+	}
 
-	talkgroup_select_by_index(6);
+	int key;
+	char *keyStr;
+	char *value;
 
-	/*GtkTreePath *path = gtk_tree_path_new_from_indices(4, -1);
-	gtk_tree_selection_select_path(tgselect, path);
-	gtk_tree_path_free(path);
-	*/
+	while (fgets (buf, sizeof (buf), fp))
+		{
+			/* Get the first and the second field. */
+			keyStr = strtok (buf, " ");
+			if (!keyStr) continue;
 
+			key = atoi(keyStr);
+
+			value = strtok (NULL, "\n");
+			if (!value) continue;
+
+			tg.id=key;
+			g_snprintf((gchar *) &tg.name, TGNAME_SIZE, value);
+			talkgroupAdd(&tg);
+	}
+	/* Close the file when done. */
+	fclose (fp);
+	return true;
 }
 
 void talkgroup_select_by_index(int index)

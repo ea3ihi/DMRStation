@@ -12,6 +12,7 @@ typedef struct tgData{
 } talkgroupData_t;
 
 void talkgroup_init(void);
+bool talkgroups_load(void);
 void talkgroupAdd(talkgroupData_t *data);
 void talkgroup_select_by_index(int index);
 #endif

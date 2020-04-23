@@ -59,7 +59,7 @@
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">1234567</property>
                 <attributes>
-                  <attribute name="font-desc" value="Sans 28"/>
+                  <attribute name="font-desc" value="Sans Bold 28"/>
                 </attributes>
               </object>
               <packing>
@@ -109,7 +109,7 @@
               </object>
               <packing>
                 <property name="x">100</property>
-                <property name="y">290</property>
+                <property name="y">280</property>
               </packing>
             </child>
             <child>

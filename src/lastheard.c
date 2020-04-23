@@ -38,10 +38,11 @@ void lastheard_init(void)
 	gtk_tree_view_append_column (GTK_TREE_VIEW (treeLH), lhcolumnCall);
 
 	lhrenderer = gtk_cell_renderer_text_new();
+
 	lhcolumnName = gtk_tree_view_column_new_with_attributes ("Name",
 		                                                   lhrenderer,
 		                                                   "text", LHNAME_COLUMN,
-		                                                   NULL);
+														   NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (treeLH), lhcolumnName);
 
 	lhrenderer = gtk_cell_renderer_text_new();
@@ -53,13 +54,13 @@ void lastheard_init(void)
 
 
 	//test
-	/*lastHeardData_t lh = {
+	lastHeardData_t lh = {
 			.tg=1234,
-			.call="CALL",
-			.name="NAME"
+			.call="EA3ASD",
+			.name="NAME NAME 1"
 	};
 	lastHeardAdd(&lh);
-	*/
+
 }
 
 

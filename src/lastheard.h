@@ -4,7 +4,7 @@
 #define _LAST_HEARD_H_
 
 #define LHCALL_SIZE	10
-#define LHNAME_SIZE 16
+#define LHNAME_SIZE 12
 
 typedef struct lastHeardData{
 	uint32_t tg;
