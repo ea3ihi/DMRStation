@@ -59,7 +59,7 @@
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">1234567</property>
                 <attributes>
-                  <attribute name="font-desc" value="&lt;Enter Value&gt; 20"/>
+                  <attribute name="font-desc" value="Sans 28"/>
                 </attributes>
               </object>
               <packing>
@@ -199,7 +199,6 @@
                     <property name="name">treeLH</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="headers_clickable">False</property>
                     <property name="enable_search">False</property>
                     <property name="enable_grid_lines">horizontal</property>
                     <child internal-child="selection">
@@ -240,7 +239,7 @@
                     <property name="label" translatable="yes">DMR Station
 By EA3IHI
 
-Version 0.6</property>
+Version 0.7</property>
                     <property name="wrap">True</property>
                     <property name="track_visited_links">False</property>
                     <attributes>

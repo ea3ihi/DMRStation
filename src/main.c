@@ -49,7 +49,8 @@ onButtonExitClick (GtkButton *button,
 
 	audio_deinit();
 	net_deinit();
-	//net_deinit();
+	dmrids_deinit();
+	ambeclient_deinit();
 	//gtk_main_quit();
 
 	gtk_window_close(GTK_WINDOW(window));
@@ -64,10 +65,8 @@ void onButtonPTT(GtkToggleButton *togglebutton,
 
 		gtk_widget_show(GTK_WIDGET(labelTT));
 
-		lastHeardData_t lh;
-		g_snprintf((gchar *) lh.call, sizeof(lh.call), "%d", settings.dmrId);
-		g_snprintf((gchar *) lh.name, sizeof(lh.name), " - - ");
-		lastHeardAdd(&lh);
+		lastHeardAddByIdAndTG(settings.dmrId, settings.currentTG);
+
 
 		while(gtk_events_pending()){
 					gtk_main_iteration();
@@ -124,9 +123,7 @@ int main (int argc, char **argv)
 	ambeclient_init();
 	audio_init();
 	dmrids_init();
-	//gpointer x = dmrids_lookup(2143827);
 
-	//x = dmrids_lookup(0);
 	//activateTG(2143827, 21463);
 
 	//g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
@@ -171,9 +168,6 @@ int main (int argc, char **argv)
 	init_CSS();
 	net_init();
 
-	//GtkWindow *mainWindow = GTK_WINDOW(window);
-	//gtk_window_fullscreen (GTK_WINDOW(window));
-
 	g_object_unref(builder);
 
 	gtk_widget_show(window);
@@ -207,15 +201,23 @@ void ui_dmr_start(uint32_t src, uint32_t dst, uint8_t type)
 
 	ui_set_tg(dst);
 
-	g_snprintf(str, 30, "ID: %d", src);
+	gpointer data = dmrids_lookup(src);
+
+	if (data)
+	{
+		char * call = strtok(data, " ");
+		g_snprintf(str, 30, "%s", call);
+	}
+	else
+	{
+		g_snprintf(str, 30, "ID: %d", src);
+	}
+
 	gtk_label_set_text (GTK_LABEL(labelID), (gchar *) str);
 
 	if (src != dmr_control.lastSrc || dst != dmr_control.lastDst)
 	{
-		lastHeardData_t lh;
-		g_snprintf((gchar *) lh.call, sizeof(lh.call), "%d", src);
-		g_snprintf((gchar *) lh.name, sizeof(lh.name), " - - ");
-		lastHeardAdd(&lh);
+		lastHeardAddByIdAndTG(src, dst);
 
 		dmr_control.lastSrc = src;
 		dmr_control.lastDst = dst;

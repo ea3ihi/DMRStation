@@ -288,7 +288,7 @@ gboolean network_tick(void)
 		{
 			dmr_control.lastSrc = 0;
 			timeoutInactivity = 0;
-			ui_dmr_stop(0, 0, 1);
+			ui_dmr_stop(0, settings.currentTG, 1);
 		}
 
 		timerPing ++;

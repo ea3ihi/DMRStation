@@ -9,6 +9,7 @@ enum
 {
    CALLSIGN_COLUMN,
    NAME_COLUMN,
+   LH_TG_COLUMN,
    N_COLUMNS
 };
 
@@ -20,10 +21,11 @@ extern GtkTreeView *treeLH;
 GtkCellRenderer *lhrenderer;
 GtkTreeViewColumn *lhcolumnCall;
 GtkTreeViewColumn *lhcolumnName;
+GtkTreeViewColumn *lhcolumnTG;
 
 void lastheard_init(void)
 {
-	lhstore = gtk_tree_store_new  (N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
+	lhstore = gtk_tree_store_new  (N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
 
 
 	gtk_tree_view_set_model (treeLH, GTK_TREE_MODEL(lhstore));
@@ -40,6 +42,13 @@ void lastheard_init(void)
 		                                                   "text", NAME_COLUMN,
 		                                                   NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (treeLH), lhcolumnName);
+
+	lhcolumnTG = gtk_tree_view_column_new_with_attributes ("TG",
+			                                                   lhrenderer,
+			                                                   "text", LH_TG_COLUMN,
+			                                                   NULL);
+
+	gtk_tree_view_append_column (GTK_TREE_VIEW (treeLH), lhcolumnTG);
 
 }
 
@@ -61,6 +70,79 @@ void lastHeardAdd(lastHeardData_t *data)
 	gtk_tree_store_set ((GtkTreeStore *) lhstore, &lhiter,
 				CALLSIGN_COLUMN, data->call,
 				NAME_COLUMN, data->name,
+				LH_TG_COLUMN, data->tg
 		        -1);
 
+	/* gtk_tree_view_scroll_to_point (GTK_TREE_VIEW (treeLH),
+	                               0,
+	                               0);*/
+
+	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(lhstore), &lhiter);
+	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW (treeLH), path, NULL, false, 0.0, 0.0);
+
+	gtk_tree_path_free(path);
 }
+
+void lastHeardAddById(uint32_t id)
+{
+	gpointer data = dmrids_lookup(id);
+	lastHeardData_t lh;
+
+	if (data)
+	{
+		char * call = strtok(data, " ");
+		g_snprintf((char *) lh.call, LHCALL_SIZE, call);
+		char * name = strtok(call+strlen(call)+1, "\0");
+		if (name)
+		{
+			g_snprintf((char *) lh.name, LHNAME_SIZE, name);
+		}
+		else
+		{
+			g_snprintf((char *) lh.name, LHNAME_SIZE, " ");
+		}
+
+	}
+	else
+	{
+		lastHeardData_t lh;
+		g_snprintf((gchar *) lh.call, sizeof(lh.call), "%u", id);
+		g_snprintf((gchar *) lh.name, sizeof(lh.name), " - - ");
+		lastHeardAdd(&lh);
+	}
+
+	lastHeardAdd(&lh);
+}
+
+void lastHeardAddByIdAndTG(uint32_t id, uint32_t dst)
+{
+	gpointer data = dmrids_lookup(id);
+	lastHeardData_t lh;
+	lh.tg = dst;
+	if (data)
+	{
+		char * call = strtok(data, " ");
+		g_snprintf((char *) lh.call, LHCALL_SIZE, call);
+		char * name = strtok(call+strlen(call)+1, "\0");
+		if (name)
+		{
+			g_snprintf((char *) lh.name, LHNAME_SIZE, name);
+		}
+		else
+		{
+			g_snprintf((char *) lh.name, LHNAME_SIZE, " ");
+		}
+
+	}
+	else
+	{
+		lastHeardData_t lh;
+		g_snprintf((gchar *) lh.call, sizeof(lh.call), "%u", id);
+		g_snprintf((gchar *) lh.name, sizeof(lh.name), " - - ");
+		lastHeardAdd(&lh);
+	}
+
+	lastHeardAdd(&lh);
+}
+
+

@@ -42,7 +42,12 @@ void ambeclient_init(void)
 	g_source_attach(source, g_main_context_default());
 }
 
+void ambeclient_deinit(void)
+{
+	GError *error = NULL;
+	g_socket_close(ambeSocket, &error);
 
+}
 
 gboolean ambeInCallback(GSocket *source, GIOCondition condition, gpointer data)
 {
