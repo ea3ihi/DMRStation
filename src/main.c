@@ -130,7 +130,15 @@ int main (int argc, char **argv)
 	GError * error = NULL;
 
 	builder = gtk_builder_new();
-	gtk_builder_add_from_resource (builder, "/application/ui/DMRStation.glade", &error);
+
+	if (settings.smallUI == 1)
+	{
+		gtk_builder_add_from_resource (builder, "/application/ui/DMRStationMini.glade", &error);
+	}
+	else
+	{
+		gtk_builder_add_from_resource (builder, "/application/ui/DMRStation.glade", &error);
+	}
 
 	window = GTK_WIDGET(gtk_builder_get_object(builder, "mainWindow"));
 
@@ -146,7 +154,14 @@ int main (int argc, char **argv)
 	treeLH = (GtkTreeView *) gtk_builder_get_object(builder, "treeLH");
 	notebook = (GtkNotebook *) gtk_builder_get_object(builder, "notebook1");
 
-	gtk_notebook_set_current_page (notebook, 1); //show last heard at start
+	if (settings.smallUI == 1)
+	{
+		gtk_notebook_set_current_page (notebook, 0); //show main tab
+	}
+	else
+	{
+		gtk_notebook_set_current_page (notebook, 1); //show last heard at start
+	}
 
 	g_signal_connect(button4000, "clicked", G_CALLBACK(onButton4000Click), NULL);
 	g_signal_connect(sliderVolume, "value-changed", G_CALLBACK(onVolumeChanged), NULL);
@@ -174,7 +189,7 @@ int main (int argc, char **argv)
 
 	gtk_main();
 
-	audio_deinit();
+
 
 	return 0;
 

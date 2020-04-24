@@ -54,12 +54,14 @@ void lastheard_init(void)
 
 
 	//test
+	/*
 	lastHeardData_t lh = {
 			.tg=1234,
 			.call="EA3ASD",
 			.name="NAME NAME 1"
 	};
 	lastHeardAdd(&lh);
+	*/
 
 }
 

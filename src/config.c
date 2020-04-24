@@ -86,6 +86,12 @@ bool loadConfigFile(void)
 		settings.ambeServerPort = atoi(val);
 	}
 
+	val = g_key_file_get_string (key_file, "ui", "smallUI", &error);
+	if (val != NULL)
+	{
+		settings.smallUI = atoi(val);
+	}
+
 return true;
 }
 

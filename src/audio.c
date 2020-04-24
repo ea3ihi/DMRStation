@@ -488,13 +488,24 @@ void setVolume(uint32_t volume)
 		);*/
 
 	//TODO: Use preferred audio device
-	pa_context_set_sink_volume_by_name (ctxt,
-			"alsa_output.platform-sound.analog-stereo",
+
+	if (audio_stream)
+	{
+	pa_context_set_sink_volume_by_index (ctxt,
+			pa_stream_get_device_index(audio_stream),
 			&mainVolume,
 			NULL,
 			NULL
 			);
-
+	}
+	/*
+	pa_context_set_sink_volume (ctxt,
+				"alsa_output.platform-sound.analog-stereo",
+				&mainVolume,
+				NULL,
+				NULL
+				);
+	*/
 }
 
 
