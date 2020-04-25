@@ -68,12 +68,7 @@ void talkgroup_init(void)
 	gtk_tree_view_append_column (GTK_TREE_VIEW (treeTG), tgcolumnName);
 
 
-	//selection and signals
-	tgselect = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeTG));
-	gtk_tree_selection_set_mode (tgselect, GTK_SELECTION_SINGLE);
-	g_signal_connect (G_OBJECT (tgselect), "changed",
-					G_CALLBACK (tg_selection_changed_cb),
-					NULL);
+
 
 
 	//Fixed groups
@@ -89,6 +84,16 @@ void talkgroup_init(void)
 
 	talkgroups_load();
 
+	tgselect = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeTG));
+	gtk_tree_selection_set_mode (tgselect, GTK_SELECTION_SINGLE);
+
+	GtkTreePath *path = gtk_tree_path_new_from_indices(0, -1);
+	gtk_tree_selection_select_path(tgselect, path);
+	gtk_tree_path_free(path);
+
+	g_signal_connect (G_OBJECT (tgselect), "changed",
+						G_CALLBACK (tg_selection_changed_cb),
+						NULL);
 }
 
 bool talkgroups_load(void)

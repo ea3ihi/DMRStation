@@ -149,8 +149,7 @@ void lastHeardAddByIdAndTG(uint32_t id, uint32_t dst)
 	}
 	else
 	{
-		lastHeardData_t lh;
-		g_snprintf((gchar *) lh.call, sizeof(lh.call), "%u", id);
+		g_snprintf((gchar *) lh.call, sizeof(lh.call), "%d", id);
 		g_snprintf((gchar *) lh.name, sizeof(lh.name), " - - ");
 		lastHeardAdd(&lh);
 	}
