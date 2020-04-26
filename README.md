@@ -1,8 +1,8 @@
 # DMRStation source code
 
-A free and open source DMR network radio by EA3IHI
+A free and open source DMR network radio by EA3IHI. You can find mode in http://dmrstation.com
 
-## notes
+## Notes
 
 The project is configured for cross compiling using eclipse and SysGCC with the STM32MP1 development toolchain.
 
