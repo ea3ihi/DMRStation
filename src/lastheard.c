@@ -96,6 +96,9 @@ void lastHeardAdd(lastHeardData_t *data)
 	gtk_tree_path_free(path);
 }
 
+/**
+ * Add entry to LH by id
+ */
 void lastHeardAddById(uint32_t id)
 {
 	gpointer data = dmrids_lookup(id);
@@ -127,6 +130,9 @@ void lastHeardAddById(uint32_t id)
 	lastHeardAdd(&lh);
 }
 
+/**
+ * Add entry to LH by src and dst
+ */
 void lastHeardAddByIdAndTG(uint32_t id, uint32_t dst)
 {
 	gpointer data = dmrids_lookup(id);

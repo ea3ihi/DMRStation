@@ -205,7 +205,7 @@
             <child>
               <object class="GtkScrolledWindow" id="scrollLH">
                 <property name="name">scrollLH</property>
-                <property name="width_request">-1</property>
+                <property name="width_request">430</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="hscrollbar_policy">never</property>
@@ -245,6 +245,7 @@
             <child>
               <object class="GtkBox">
                 <property name="name">boxInfo</property>
+                <property name="width_request">430</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
@@ -256,7 +257,7 @@
                     <property name="label" translatable="yes">DMR Station
 By EA3IHI
 
-Version 0.7</property>
+Version 0.8</property>
                     <property name="wrap">True</property>
                     <property name="track_visited_links">False</property>
                     <attributes>

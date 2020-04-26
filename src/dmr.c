@@ -13,12 +13,17 @@ char err_str[64];
 dmr_control_struct_t dmr_control;
 
 
-
+/**
+ * Return DMR status
+ */
 DMRStatus_t getDMRStatus()
 {
 	return dmr_control.dmr_status;
 }
 
+/**
+ * Set DMR status
+ */
 void setDMRStatus(DMRStatus_t status)
 {
 	dmr_control.dmr_status = status;

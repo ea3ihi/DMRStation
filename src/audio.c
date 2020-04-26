@@ -472,6 +472,9 @@ void context_state_callback(pa_context *c, void *userdata) {
 	  }
 }
 
+/**
+ * Change output stream volume
+ */
 void setVolume(uint32_t volume)
 {
 	pa_cvolume_set	(&mainVolume,
@@ -510,7 +513,9 @@ void setVolume(uint32_t volume)
 
 
 
-
+/**
+ * Start audio recording
+ */
 void audio_record_start(void)
 {
 	//pa_threaded_mainloop_lock(pa_ml);
@@ -525,6 +530,9 @@ void audio_record_start(void)
 	//pa_threaded_mainloop_unlock(pa_ml);
 }
 
+/**
+ * Sop audio recording
+ */
 void audio_record_stop(void)
 {
 	//pa_threaded_mainloop_lock(pa_ml);

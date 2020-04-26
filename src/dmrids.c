@@ -5,6 +5,9 @@
 
 GHashTable *dmridstable;
 
+/**
+ * Read and parse DMR ids file
+ */
 void dmrids_init(void)
 {
 	FILE *fp;
@@ -65,6 +68,9 @@ void dmrids_deinit(void)
 	g_hash_table_destroy (dmridstable);
 }
 
+/**
+ * Get user info from DMR id
+ */
 gpointer dmrids_lookup(uint32_t key)
 {
 	return g_hash_table_lookup (dmridstable,

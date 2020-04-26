@@ -95,7 +95,9 @@ bool loadConfigFile(void)
 return true;
 }
 
-
+/**
+ * Load configuration or set some default settings
+ */
 void setDefaultSettings(void)
 {
 	if(loadConfigFile())

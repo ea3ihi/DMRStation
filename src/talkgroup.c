@@ -96,6 +96,9 @@ void talkgroup_init(void)
 						NULL);
 }
 
+/**
+ * Parse tgs.dat file and add TGs
+ */
 bool talkgroups_load(void)
 {
 

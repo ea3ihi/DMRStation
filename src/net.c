@@ -102,6 +102,7 @@ void tick_DMRQueue(void)
 	if (totcounter > 10)
 	{
 		tickTOT();
+		totcounter = 0;
 	}
 }
 
@@ -419,7 +420,9 @@ bool writeLogin(void)
 }
 
 
-
+/**
+ * Activate a TG by sending header, empty audio and terminator
+ */
 void activateTG(uint32_t src, uint32_t dst){
 
 	ui_set_tg(dst);
@@ -732,7 +735,9 @@ void createVoiceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq,
 	//memcpy(dataOut, dmrData, 53);
 }
 
-
+/**
+ * Prepare and send voice header
+ */
 void dmr_start_tx(void)
 {
 	flushDMRQueue();
@@ -753,7 +758,9 @@ void dmr_start_tx(void)
 }
 
 
-
+/**
+ * Send voice terminator
+ */
 void dmr_stop_tx(void)
 {
 	g_printf("dmr_stop_tx\n");
