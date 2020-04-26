@@ -9,3 +9,8 @@ The project is configured for cross compiling using eclipse and SysGCC with the 
 ## Binaries
 
 If you are just looking for binaries, get them from the DMRStation-binaries repository.
+
+
+## Credits
+
+This software would not exist without the code and inspiration from other projects as Opengd77, HBLink and MMDVM.
