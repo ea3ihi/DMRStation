@@ -99,7 +99,7 @@ void tick_DMRQueue(void)
 	}
 
 	totcounter++;
-	if (totcounter > 10)
+	if (totcounter > 8)
 	{
 		tickTOT();
 		totcounter = 0;

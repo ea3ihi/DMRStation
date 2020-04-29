@@ -85,6 +85,16 @@ void onButtonPTT(GtkToggleButton *togglebutton,
 
 		lastHeardAddByIdAndTG(settings.dmrId, settings.currentTG);
 
+		if (settings.tot != 0 && settings.totReverse == 1)
+		{
+			char buf[10];
+			g_snprintf(buf, 10 , "%d", settings.tot);
+			gtk_label_set_text (GTK_LABEL(labelTT), buf);
+		}
+		else
+		{
+			gtk_label_set_text (GTK_LABEL(labelTT), "0");
+		}
 
 		while(gtk_events_pending()){
 					gtk_main_iteration();
@@ -348,9 +358,27 @@ void tickTOT(void)
 	gchar buf[10];
 
 	gdouble tot = g_timer_elapsed (dmr_control.timerTOT, NULL);
+	int itot = (int) tot;
 
-	g_snprintf(buf, 10 , "%d", (int) tot);
+	if (settings.tot != 0)
+	{
+		if (itot > settings.tot)
+		{
+			gtk_toggle_button_set_active ( (GtkToggleButton *) buttonPTT,
+										  FALSE);
+		}
 
+		if (settings.totReverse == 1)
+		{
+			itot =settings.tot - itot;
+		}
+	}
+	else
+	{
+
+	}
+
+	g_snprintf(buf, 10 , "%d", itot);
 	gtk_label_set_text (GTK_LABEL(labelTT), buf);
 
 }

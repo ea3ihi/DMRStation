@@ -53,7 +53,6 @@ bool loadConfigFile(void)
 		settings.initialTG = atoi(val);
 	}
 
-
 	//server data
 	val = g_key_file_get_string (key_file, "server", "remoteHost", &error);
 	if (val != NULL)
@@ -92,6 +91,19 @@ bool loadConfigFile(void)
 		settings.smallUI = atoi(val);
 	}
 
+	//misc options
+	val = g_key_file_get_string (key_file, "misc", "tot", &error);
+	if (val != NULL)
+	{
+		settings.tot = atoi(val);
+	}
+	val = g_key_file_get_string (key_file, "misc", "totReverse", &error);
+	if (val != NULL)
+	{
+		settings.totReverse = atoi(val);
+	}
+
+
 return true;
 }
 
@@ -111,6 +123,8 @@ void setDefaultSettings(void)
 	settings.repeaterId = 214381466;
 	settings.remotePort = 62031;
 	settings.initialTG = 21460;
+	settings.tot = 180;
+	settings.totReverse = 0;
 
 	//local
 	strcpy((char *) settings.remoteHost, (char *) "192.168.3.254");
