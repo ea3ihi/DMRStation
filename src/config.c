@@ -103,6 +103,31 @@ bool loadConfigFile(void)
 		settings.totReverse = atoi(val);
 	}
 
+	//ptt
+	val = g_key_file_get_string (key_file, "ptt", "pttBank", &error);
+	if (val != NULL)
+	{
+		g_snprintf((gchar *) settings.pttBank, PTT_BANK_LENGTH, "%s", val);
+	}
+
+	val = g_key_file_get_string (key_file, "ptt", "pttPort", &error);
+	if (val != NULL)
+	{
+		settings.pttPort = atoi(val);
+	}
+
+	val = g_key_file_get_string (key_file, "ptt", "pttEnabled", &error);
+	if (val != NULL)
+	{
+		settings.pttEnabled = atoi(val);
+	}
+
+	val = g_key_file_get_string (key_file, "ptt", "pttInvert", &error);
+	if (val != NULL)
+	{
+		settings.pttInvert = atoi(val);
+	}
+
 
 return true;
 }
@@ -112,6 +137,12 @@ return true;
  */
 void setDefaultSettings(void)
 {
+	//some default values
+	settings.tot = 180;
+	settings.totReverse = 0;
+	settings.pttEnabled = 0;
+	settings.pttInvert = 0;
+
 	if(loadConfigFile())
 	{
 		return;
@@ -123,8 +154,7 @@ void setDefaultSettings(void)
 	settings.repeaterId = 214381466;
 	settings.remotePort = 62031;
 	settings.initialTG = 21460;
-	settings.tot = 180;
-	settings.totReverse = 0;
+
 
 	//local
 	strcpy((char *) settings.remoteHost, (char *) "192.168.3.254");

@@ -104,6 +104,11 @@ void tick_DMRQueue(void)
 		tickTOT();
 		totcounter = 0;
 	}
+
+	if (settings.pttEnabled == 1)
+	{
+		ptt_tick();
+	}
 }
 
 void net_init(void)
