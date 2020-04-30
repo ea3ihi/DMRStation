@@ -369,7 +369,7 @@ bool writeConfig(void)
 		settings.callsign,
 		449000000, 444000000, power,
 		1, latitude, longitude, height, "Earth",
-		"OPENDMR", slots, "github.com/ea3ihi", "20200316", software);
+		"DMRStation", slots, "github.com/ea3ihi", "20200430", software);
 
 	return network_send(buffer, 302U);
 }
