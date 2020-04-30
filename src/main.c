@@ -69,6 +69,10 @@ onButtonExitClick (GtkButton *button,
 	net_deinit();
 	dmrids_deinit();
 	ambeclient_deinit();
+	if (settings.pttEnabled == 1)
+	{
+		ptt_deinit();
+	}
 	//gtk_main_quit();
 
 	gtk_window_close(GTK_WINDOW(window));
@@ -151,6 +155,10 @@ int main (int argc, char **argv)
 	ambeclient_init();
 	audio_init();
 	dmrids_init();
+	if (settings.pttEnabled == 1)
+	{
+		ptt_init();
+	}
 
 	//activateTG(2143827, 21463);
 

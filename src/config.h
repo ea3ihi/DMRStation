@@ -7,6 +7,7 @@
 #define PASSWORD_LENGTH 16
 #define HOST_LENGTH 16
 #define CALLSIGN_LENGTH 10
+#define PTT_BANK_LENGTH 10
 
 typedef struct AppSettingsStruct
 {
@@ -24,6 +25,10 @@ typedef struct AppSettingsStruct
 	uint8_t		smallUI;
 	uint16_t	tot; //talk out time
 	uint16_t	totReverse; //show count down timer
+	uint8_t     pttBank[PTT_BANK_LENGTH];
+	uint8_t		pttPort;
+	uint8_t		pttEnabled;
+	uint8_t		pttInvert;
 } AppSettingsStruct_t;
 
 
