@@ -160,9 +160,6 @@ int main (int argc, char **argv)
 		ptt_init();
 	}
 
-	//activateTG(2143827, 21463);
-
-	//g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
 	GError * error = NULL;
 
 	builder = gtk_builder_new();

@@ -16,6 +16,8 @@ extern GtkWidget *buttonPTT;
 
 int fd, ret;
 
+bool pttUsed = false;
+
 void ptt_init(void)
 {
 	g_snprintf(chrdev_name, 20, "%s%s", "/dev/", settings.pttBank);
@@ -72,14 +74,16 @@ void ptt_tick(void)
 		{
 			gtk_toggle_button_set_active ( (GtkToggleButton *) buttonPTT,
 												  TRUE);
+			pttUsed = true;
 		}
 	}
 	else
 	{
-		if (dmr_control.dmr_status == DMR_STATUS_TX)
+		if (dmr_control.dmr_status == DMR_STATUS_TX && pttUsed == true)
 		{
 			gtk_toggle_button_set_active ( (GtkToggleButton *) buttonPTT,
 												  FALSE);
+			pttUsed = false;
 		}
 	}
 }
