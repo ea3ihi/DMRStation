@@ -3,6 +3,7 @@
   <gresource prefix="/application/ui">
     <file preprocess="xml-stripblanks">DMRStation.glade</file>
 	<file preprocess="xml-stripblanks">DMRStationMini.glade</file>
+	<file preprocess="xml-stripblanks">DMRStationMicro.glade</file>
 	<file>styles.css</file>
   </gresource>
 </gresources>

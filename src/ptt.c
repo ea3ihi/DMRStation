@@ -38,7 +38,7 @@ void ptt_init(void)
 	ret = ioctl(fd, GPIO_GET_LINEHANDLE_IOCTL, &pttreq);
 	if (ret == -1)
 	{
-		g_printf(stderr, "Failed to issue GET LINEHANDLE IOCTL (%d)\n", ret);
+		g_printf("Failed to issue GET LINEHANDLE IOCTL (%d)\n", ret);
 	}
 
 	if (close(fd) == -1)

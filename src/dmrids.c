@@ -45,7 +45,7 @@ void dmrids_init(void)
 	        *knew = key;
 
 	        /* Try looking up this key. */
-	        if (g_hash_table_lookup_extended (dmridstable, knew, &old_key, &old_value))
+	        if (g_hash_table_lookup_extended (dmridstable, knew, (void **)&old_key, (void **)&old_value))
 	        {
 	            /* Insert the new value */
 	            g_hash_table_insert (dmridstable, knew, g_strdup (value));

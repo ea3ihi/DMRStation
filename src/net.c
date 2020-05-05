@@ -352,7 +352,8 @@ bool writeConfig(void)
 {
 	uint8_t *buffer = TxData;
 
-	const char software[] = "MMDVM_DMO";
+	//const char software[] = "MMDVM_DMO";
+	const char software[] = "MMDVM_DMRSTATION";
 	char slots = '4';
 
 	memcpy(buffer + 0U, "RPTC", 4U);
