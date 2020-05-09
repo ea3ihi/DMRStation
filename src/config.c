@@ -142,6 +142,7 @@ void setDefaultSettings(void)
 	settings.totReverse = 0;
 	settings.pttEnabled = 0;
 	settings.pttInvert = 0;
+	settings.currentTGPrivate = 0;
 
 	if(loadConfigFile())
 	{

@@ -30,15 +30,27 @@ tg_selection_changed_cb (GtkTreeSelection *selection, gpointer data)
         GtkTreeIter iter;
         GtkTreeModel *model;
         uint32_t tg;
+        char * tgName;
 
         if (gtk_tree_selection_get_selected (selection, &model, &iter))
         {
                 gtk_tree_model_get (model, &iter, TGID_COLUMN, &tg, -1);
+                gtk_tree_model_get (model, &iter, TGNAME_COLUMN, &tgName, -1);
 
                 if (tg != settings.currentTG)
                 {
                 	g_print ("Selected tg %d\n", tg);
+
+                	if (strstr(tgName, "*"))
+                	{
+                		settings.currentTGPrivate = 1;
+                	}
+                	else
+                	{
+                		settings.currentTGPrivate = 0;
+                	}
                 	activateTG(settings.dmrId, tg);
+
                 }
 
                 //g_free (tg);
@@ -79,7 +91,7 @@ void talkgroup_init(void)
 	talkgroupAdd(&tg);
 
 	tg.id=9990;
-	g_snprintf((gchar *) &tg.name, TGNAME_SIZE, "Parrot");
+	g_snprintf((gchar *) &tg.name, TGNAME_SIZE, "*Parrot");
 	talkgroupAdd(&tg);
 
 	talkgroups_load();
@@ -160,7 +172,14 @@ void talkgroupAdd(talkgroupData_t *data)
 		}
 	}
 
-	g_snprintf(buf, 20, "%d %s", data->id, (gchar *)data->name);
+	if (data->name[0] == '*')
+	{
+		g_snprintf(buf, 20, "%s",(gchar *)data->name);
+	}
+	else
+	{
+		g_snprintf(buf, 20, "%d %s", data->id, (gchar *)data->name);
+	}
 	gtk_tree_store_append ((GtkTreeStore *) tgstore, &tgiter, NULL);
 
 	gtk_tree_store_set ((GtkTreeStore *) tgstore, &tgiter,

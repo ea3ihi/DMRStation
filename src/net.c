@@ -493,6 +493,11 @@ void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq
 	//bit fields
 	dmrData[15]= 0xA1; //data2 frame 2 group call slot 0 voice header
 
+	if (settings.currentTGPrivate == 1)
+	{
+		dmrData[15] |= 0x40;
+	}
+
 	//StreamId
 	dmrData[16]= (streamId >> 24) & 0xFF;
 	dmrData[17]= (streamId >> 16) & 0xFF;
@@ -506,7 +511,7 @@ void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq
 
 	lc.srcId = src;
 	lc.dstId = dst;
-	lc.FLCO = 0;// Private or group call
+	lc.FLCO = settings.currentTGPrivate;// Private or group call
 
 	// Encode the src and dst Ids etc
 	if (!DMRFullLC_encode(&lc, &dmrData[20], DT_VOICE_LC_HEADER)) // Encode the src and dst Ids etc
@@ -558,6 +563,11 @@ void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t
 	//bit fields
 	dmrData[15]= 0xA2; //data2 frame 2 group call slot 0 voice terminator
 
+	if (settings.currentTGPrivate == 1)
+	{
+		dmrData[15] |= 0x40;
+	}
+
 	//StreamId
 	dmrData[16]= (streamId >> 24) & 0xFF;
 	dmrData[17]= (streamId >> 16) & 0xFF;
@@ -571,7 +581,7 @@ void createVoiceTerminator(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t
 
 	lc.srcId = src;
 	lc.dstId = dst;
-	lc.FLCO = 0;// Private or group call
+	lc.FLCO = settings.currentTGPrivate;// Private or group call
 
 	// Encode the src and dst Ids etc
 	if (!DMRFullLC_encode(&lc, &dmrData[20], DT_TERMINATOR_WITH_LC)) // Encode the src and dst Ids etc
@@ -627,6 +637,11 @@ void createSilenceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t se
 		voiceSeq = 0x10;
 	}
 	dmrData[15]= 0x80 + voiceSeq;
+
+	if (settings.currentTGPrivate == 1)
+	{
+		dmrData[15] |= 0x40;
+	}
 
 	//StreamId
 	dmrData[16]= (streamId >> 24) & 0xFF;
@@ -707,6 +722,11 @@ void createVoiceFrame(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq,
 		voiceSeq = 0x10;
 	}
 	dmrData[15]= 0x80 + voiceSeq;
+
+	if (settings.currentTGPrivate == 1)
+	{
+		dmrData[15] |= 0x40;
+	}
 
 	//StreamId
 	dmrData[16]= (streamId >> 24) & 0xFF;

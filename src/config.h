@@ -17,6 +17,7 @@ typedef struct AppSettingsStruct
 	uint16_t 	remotePort;
 	uint32_t 	initialTG;
 	uint32_t 	currentTG;
+	uint8_t		currentTGPrivate;
 	uint8_t 	remoteHost[HOST_LENGTH];
 	uint8_t     password[PASSWORD_LENGTH];
 	uint8_t     callsign[CALLSIGN_LENGTH];

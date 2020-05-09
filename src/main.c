@@ -53,6 +53,7 @@ void
 onButton4000Click (GtkButton *button,
                gpointer   user_data)
 {
+	settings.currentTGPrivate = 0;
 	activateTG(settings.dmrId, 4000);
 	void talkgroup_select_by_index(int index);
 	settings.currentTG = 0;

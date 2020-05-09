@@ -518,16 +518,15 @@ void setVolume(uint32_t volume)
  */
 void audio_record_start(void)
 {
-	//pa_threaded_mainloop_lock(pa_ml);
-	audioBufferFlush();
-
-	pa_stream_cork(audio_record_stream,
-				0,
-				stream_cork_cb,
-				NULL
-				);
-
-	//pa_threaded_mainloop_unlock(pa_ml);
+	if (audio_record_stream)
+	{
+		audioBufferFlush();
+		pa_stream_cork(audio_record_stream,
+					0,
+					stream_cork_cb,
+					NULL
+					);
+	}
 }
 
 /**
@@ -535,14 +534,15 @@ void audio_record_start(void)
  */
 void audio_record_stop(void)
 {
-	//pa_threaded_mainloop_lock(pa_ml);
-	audioBufferFlush();
-	pa_stream_cork(audio_record_stream,
-					1,
-					stream_cork_cb,
-					NULL
-					);
-	//pa_threaded_mainloop_unlock(pa_ml);
+	if (audio_record_stream)
+	{
+		audioBufferFlush();
+		pa_stream_cork(audio_record_stream,
+						1,
+						stream_cork_cb,
+						NULL
+						);
+	}
 }
 
 
