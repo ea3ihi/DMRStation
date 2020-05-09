@@ -241,7 +241,16 @@ int main (int argc, char **argv)
 void ui_set_tg(uint32_t tg)
 {
 	gchar str[30] ={0};
-	g_snprintf(str, 30, "TG %d", tg);
+
+	if (settings.currentTGPrivate == 1)
+	{
+		g_snprintf(str, 30, "PC %d", tg);
+	}
+	else
+	{
+		g_snprintf(str, 30, "TG %d", tg);
+	}
+
 	if (tg == 0)
 	{
 		g_print("TG is 0!\n");

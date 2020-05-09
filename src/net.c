@@ -434,6 +434,11 @@ void activateTG(uint32_t src, uint32_t dst){
 	ui_set_tg(dst);
 	settings.currentTG = dst;
 
+	if (settings.currentTGPrivate == 1)
+	{
+		return; //no need to open the TG if it is a private call
+	}
+
 	memset(dmrData, 0, 53);
 	uint8_t seq = 1;
 
