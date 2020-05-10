@@ -194,6 +194,13 @@ int main (int argc, char **argv)
 	treeLH = (GtkTreeView *) gtk_builder_get_object(builder, "treeLH");
 	notebook = (GtkNotebook *) gtk_builder_get_object(builder, "notebook1");
 
+
+	if (settings.decorated == 1)
+	{
+		gtk_window_set_decorated (GTK_WINDOW(window),
+		                          true);
+	}
+
 	switch (settings.smallUI)
 	{
 		case 1:

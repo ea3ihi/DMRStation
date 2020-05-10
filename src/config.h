@@ -24,6 +24,7 @@ typedef struct AppSettingsStruct
 	uint8_t     ambeServerHost[HOST_LENGTH];
 	uint16_t    ambeServerPort;
 	uint8_t		smallUI;
+	uint8_t		decorated;
 	uint16_t	tot; //talk out time
 	uint16_t	totReverse; //show count down timer
 	uint8_t     pttBank[PTT_BANK_LENGTH];

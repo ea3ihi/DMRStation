@@ -91,6 +91,12 @@ bool loadConfigFile(void)
 		settings.smallUI = atoi(val);
 	}
 
+	val = g_key_file_get_string (key_file, "ui", "decorated", &error);
+	if (val != NULL)
+	{
+		settings.decorated = atoi(val);
+	}
+
 	//misc options
 	val = g_key_file_get_string (key_file, "misc", "tot", &error);
 	if (val != NULL)
@@ -143,6 +149,7 @@ void setDefaultSettings(void)
 	settings.pttEnabled = 0;
 	settings.pttInvert = 0;
 	settings.currentTGPrivate = 0;
+	settings.decorated = 0;
 
 	if(loadConfigFile())
 	{
