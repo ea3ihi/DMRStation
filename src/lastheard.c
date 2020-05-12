@@ -39,6 +39,19 @@ void lastheard_init(void)
 
 	lhrenderer = gtk_cell_renderer_text_new();
 
+	 GValue val = G_VALUE_INIT;
+	 g_value_init(&val, G_TYPE_INT);
+	 g_value_set_int (&val, 160);
+
+	g_object_set_property ( (GObject *) lhrenderer,
+						   "wrap-width",
+	                       &val);
+
+	g_value_set_int (&val, PANGO_WRAP_WORD_CHAR);
+	g_object_set_property ( (GObject *) lhrenderer,
+							   "wrap-mode",
+							   &val);
+
 	lhcolumnName = gtk_tree_view_column_new_with_attributes ("Name",
 		                                                   lhrenderer,
 		                                                   "text", LHNAME_COLUMN,
