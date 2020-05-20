@@ -279,8 +279,15 @@ void ui_dmr_start(uint32_t src, uint32_t dst, uint8_t type)
 	if (data)
 	{
 		char * call = strtok(data, " ");
-		char * name = strtok(NULL, " ");
-		g_snprintf(str, 30, "%s\n%s", call, name);
+		char * name = strtok(call+strlen(call)+1, "\0");
+		if (name)
+		{
+			g_snprintf(str, 30, "%s\n%s", call, name);
+		}
+		else
+		{
+			g_snprintf(str, 30, "%s", call);
+		}
 	}
 	else
 	{
