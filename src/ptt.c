@@ -6,6 +6,10 @@
 #include <sys/ioctl.h>
 #include <stdio.h>
 
+#define GPIOHANDLE_REQUEST_BIAS_PULL_UP	(1UL << 5)
+#define GPIOHANDLE_REQUEST_BIAS_PULL_DOWN	(1UL << 6)
+#define GPIOHANDLE_REQUEST_BIAS_DISABLE	(1UL << 7)
+
 struct gpiohandle_request pttreq;
 struct gpiohandle_data pttdata;
 char chrdev_name[20];

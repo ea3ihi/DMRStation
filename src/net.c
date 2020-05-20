@@ -175,18 +175,20 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 										case WAITING_LOGIN:
 											memcpy((uint8_t *) &salt, RxData + 6U, sizeof(uint32_t));
 											writeAuthorisation();
+											g_print("Sending auth\n");
 											dmrnet_status = WAITING_AUTHORISATION;
 											ui_net_connection(WAITING_AUTHORISATION);
 											break;
 										case WAITING_AUTHORISATION:
 											writeConfig();
+											g_print("Send config\n");
 											dmrnet_status = WAITING_CONFIG;
 											ui_net_connection(WAITING_CONFIG);
 											break;
 										case WAITING_CONFIG:
 											dmrnet_status = RUNNING;
 											ui_net_connection(RUNNING);
-
+											g_print("Connected\n");
 											activateTG(settings.dmrId, settings.currentTG);
 
 											break;
@@ -196,6 +198,7 @@ gboolean dataInCallback(GSocket *source, GIOCondition condition, gpointer data)
 						} else if(memcmp(RxData, "MSTPONG", 7U) == 0) {
 							timerPing = 0;
 						} else if (memcmp(RxData, "MSTCL",   5U) == 0) {
+							g_print("Master closing\n");
 							//master closing
 							//close();
 							//open();
@@ -311,7 +314,7 @@ gboolean network_tick(void)
 			dmrnet_status = WAITING_CONNECT;
 			ui_net_connection(WAITING_CONNECT);
 			timeout_reconnect = 0;
-
+			g_print("Ping timeout\n");
 		}
 	}
 	else
