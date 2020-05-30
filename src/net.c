@@ -454,10 +454,13 @@ void activateTG(uint32_t src, uint32_t dst){
 
 	//send some empty
 
-	for (int i = 0; i<6; i++)
+	for (int j = 0; j < 2; j++)
 	{
-		createSilenceFrame(src, dst, dmrData, seq++, streamid, i);
-		network_send(dmrData, 53);
+		for (int i = 0; i<6; i++)
+		{
+			createSilenceFrame(src, dst, dmrData, seq++, streamid, i);
+			network_send(dmrData, 53);
+		}
 	}
 
 	//send VOICE TERMINATOR x 2
