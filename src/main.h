@@ -23,6 +23,7 @@
 #include "fw_mbelib.h"
 #include "audio.h"
 #include "ambe_client.h"
+#include "codec2_client.h"
 #include "lastheard.h"
 #include "talkgroup.h"
 #include "dmrids.h"

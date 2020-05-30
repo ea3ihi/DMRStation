@@ -85,6 +85,19 @@ bool loadConfigFile(void)
 		settings.ambeServerPort = atoi(val);
 	}
 
+	//codec2 data
+	val = g_key_file_get_string (key_file, "codec2", "codec2ServerHost", &error);
+	if (val != NULL)
+	{
+		g_snprintf((gchar *) settings.codec2ServerHost, HOST_LENGTH, "%s", val);
+	}
+
+	val = g_key_file_get_string (key_file, "codec2", "codec2ServerPort", &error);
+	if (val != NULL)
+	{
+		settings.codec2ServerPort = atoi(val);
+	}
+
 	val = g_key_file_get_string (key_file, "ui", "smallUI", &error);
 	if (val != NULL)
 	{
@@ -178,4 +191,8 @@ void setDefaultSettings(void)
 
 	strcpy((char *) settings.ambeServerHost, (char *) "127.0.0.1");
 	settings.ambeServerPort = 2460;
+
+	strcpy((char *) settings.codec2ServerHost, (char *) "127.0.0.1");
+	settings.codec2ServerPort = 2470;
+
 }
