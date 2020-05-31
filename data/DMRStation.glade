@@ -248,7 +248,8 @@ ABCDEFG</property>
                     <property name="label" translatable="yes">DMR Station
 By EA3IHI
 
-Version 0.8</property>
+2020/05/31
+Version 0.9</property>
                     <property name="wrap">True</property>
                     <property name="track_visited_links">False</property>
                     <attributes>

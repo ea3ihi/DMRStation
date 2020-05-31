@@ -674,6 +674,20 @@ void prepareVoiceFrame( uint8_t * ambe72Data)
 {
 	memset(dmrData, 0, 53);
 
+	if (dmr_control.voiceHeaderSent == 0)
+	{
+		dmr_control.voiceHeaderSent = 1;
+		createVoiceHeader(settings.dmrId,
+						dmr_control.destination,
+						dmrData,
+						dmr_control.DMRSequence++,
+						dmr_control.streamId);
+
+		writeDMRQueue((uint8_t *) dmrData);
+		memset(dmrData, 0, 53);
+
+	}
+
 	createVoiceFrame(settings.dmrId,
 				dmr_control.destination,
 				dmrData,
@@ -785,14 +799,17 @@ void dmr_start_tx(void)
 	dmr_control.DMRSequence = 0;
 	dmr_control.destination = settings.currentTG;
 	dmr_control.dmr_status = DMR_STATUS_TX;
+	dmr_control.voiceHeaderSent = 0;
 
+	/*
 	createVoiceHeader(settings.dmrId,
 				dmr_control.destination,
 				dmrData,
 				dmr_control.DMRSequence++,
 				dmr_control.streamId);
-	//network_send(dmrData, 53);
+
 	writeDMRQueue((uint8_t *) dmrData);
+	*/
 
 	//send 2 voice headers?
 	//writeDMRQueue((uint8_t *) dmrData);
