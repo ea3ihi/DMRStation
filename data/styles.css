@@ -94,6 +94,19 @@ treeview.view header button {
 	background: #802020;
 }
 
+#buttonLock
+{
+	color: white;
+	text-shadow: none;
+	font-size:16px;
+	font-weight: bold;
+	background: green;
+	border-radius: 20px;
+}
+#buttonLock:checked {
+	background: #FF0000;
+}
+
 #buttonConnection {
 	color: white
 }

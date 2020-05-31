@@ -29,6 +29,8 @@ GtkWidget       *window;
 GtkWidget       *button4000;
 GtkWidget       *buttonExit;
 GtkWidget       *buttonPTT;
+GtkWidget       *buttonLock;
+
 
 GtkWidget       *sliderVolume;
 
@@ -70,6 +72,7 @@ onButtonExitClick (GtkButton *button,
 	net_deinit();
 	dmrids_deinit();
 	ambeclient_deinit();
+	codec2client_deinit();
 	if (settings.pttEnabled == 1)
 	{
 		ptt_deinit();
@@ -128,7 +131,26 @@ void onButtonPTT(GtkToggleButton *togglebutton,
 	}
 
 }
+void onButtonLock(GtkToggleButton *togglebutton,
+        gpointer         user_data)
+{
+	if (gtk_toggle_button_get_active (togglebutton))
+	{
+		gtk_widget_set_sensitive (buttonPTT, FALSE);
+		gtk_widget_set_sensitive (button4000, FALSE);
+		gtk_widget_set_sensitive (sliderVolume, FALSE);
+		gtk_widget_set_sensitive (GTK_WIDGET(notebook), FALSE);
 
+	}
+	else
+	{
+		gtk_widget_set_sensitive (buttonPTT, TRUE);
+		gtk_widget_set_sensitive (button4000, TRUE);
+		gtk_widget_set_sensitive (sliderVolume, TRUE);
+		gtk_widget_set_sensitive (GTK_WIDGET(notebook), TRUE);
+
+	}
+}
 
 int main (int argc, char **argv)
 {
@@ -154,6 +176,7 @@ int main (int argc, char **argv)
 	settings.currentTG = settings.initialTG;
 
 	ambeclient_init();
+	codec2client_init();
 	audio_init();
 	dmrids_init();
 	if (settings.pttEnabled == 1)
@@ -189,6 +212,7 @@ int main (int argc, char **argv)
 	button4000 = GTK_WIDGET(gtk_builder_get_object(builder, "button4000"));
 	buttonExit = GTK_WIDGET(gtk_builder_get_object(builder, "buttonExit"));
 	buttonPTT = GTK_WIDGET(gtk_builder_get_object(builder, "buttonPTT"));
+	buttonLock = GTK_WIDGET(gtk_builder_get_object(builder, "buttonLock"));
 	sliderVolume = GTK_WIDGET(gtk_builder_get_object(builder, "sliderVolume"));
 	treeTG = (GtkTreeView *) gtk_builder_get_object(builder, "treeTG");
 	treeLH = (GtkTreeView *) gtk_builder_get_object(builder, "treeLH");
@@ -214,9 +238,8 @@ int main (int argc, char **argv)
 	g_signal_connect(button4000, "clicked", G_CALLBACK(onButton4000Click), NULL);
 	g_signal_connect(sliderVolume, "value-changed", G_CALLBACK(onVolumeChanged), NULL);
 	g_signal_connect(buttonExit, "clicked", G_CALLBACK(onButtonExitClick), NULL);
-
 	g_signal_connect(buttonPTT, "toggled", G_CALLBACK(onButtonPTT), NULL);
-
+	g_signal_connect(buttonLock, "toggled", G_CALLBACK(onButtonLock), NULL);
 
 	g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 

@@ -64,29 +64,31 @@
                     <property name="height_request">40</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">1234567</property>
+                    <property name="label" translatable="yes">1234567
+ABCDEFG</property>
                     <property name="justify">center</property>
+                    <property name="wrap">True</property>
                     <attributes>
                       <attribute name="font-desc" value="Sans Bold 19"/>
                     </attributes>
                   </object>
                   <packing>
-                    <property name="x">5</property>
-                    <property name="y">70</property>
+                    <property name="x">4</property>
+                    <property name="y">55</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="buttonConnection">
                     <property name="label" translatable="yes">...</property>
                     <property name="name">buttonConnection</property>
-                    <property name="width_request">85</property>
+                    <property name="width_request">60</property>
                     <property name="height_request">35</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                   </object>
                   <packing>
-                    <property name="x">190</property>
+                    <property name="x">216</property>
                     <property name="y">190</property>
                   </packing>
                 </child>
@@ -124,7 +126,7 @@
                 <child>
                   <object class="GtkLabel" id="labelTT">
                     <property name="name">labelTT</property>
-                    <property name="width_request">92</property>
+                    <property name="width_request">70</property>
                     <property name="height_request">45</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">180</property>
@@ -133,7 +135,7 @@
                     </attributes>
                   </object>
                   <packing>
-                    <property name="x">95</property>
+                    <property name="x">90</property>
                     <property name="y">185</property>
                   </packing>
                 </child>
@@ -150,6 +152,21 @@
                   <packing>
                     <property name="x">190</property>
                     <property name="y">133</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="buttonLock">
+                    <property name="label" translatable="yes">L</property>
+                    <property name="name">buttonLock</property>
+                    <property name="width_request">50</property>
+                    <property name="height_request">36</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                  </object>
+                  <packing>
+                    <property name="x">162</property>
+                    <property name="y">187</property>
                   </packing>
                 </child>
               </object>

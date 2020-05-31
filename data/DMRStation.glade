@@ -146,6 +146,21 @@ ABCDEFG</property>
                 <property name="y">155</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkToggleButton" id="buttonLock">
+                <property name="label" translatable="yes">L</property>
+                <property name="name">buttonLock</property>
+                <property name="width_request">50</property>
+                <property name="height_request">40</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="x">236</property>
+                <property name="y">270</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
