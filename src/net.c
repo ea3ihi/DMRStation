@@ -29,7 +29,7 @@ uint16_t timeoutInactivity;
 uint32_t salt;
 uint32_t ticks;
 
-dmr_control_struct_t dmr_control;
+volatile dmr_control_struct_t dmr_control;
 
 guint netTimeout;
 
@@ -454,10 +454,13 @@ void activateTG(uint32_t src, uint32_t dst){
 
 	//send some empty
 
-	for (int i = 0; i<6; i++)
+	for (int j = 0; j < 2; j++)
 	{
-		createSilenceFrame(src, dst, dmrData, seq++, streamid, i);
-		network_send(dmrData, 53);
+		for (int i = 0; i<6; i++)
+		{
+			createSilenceFrame(src, dst, dmrData, seq++, streamid, i);
+			network_send(dmrData, 53);
+		}
 	}
 
 	//send VOICE TERMINATOR x 2
@@ -524,6 +527,7 @@ void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq
 	// Encode the src and dst Ids etc
 	if (!DMRFullLC_encode(&lc, &dmrData[20], DT_VOICE_LC_HEADER)) // Encode the src and dst Ids etc
 	{
+		g_printf("Can not encode FLC!\n");
 		return;
 	}
 
@@ -670,6 +674,20 @@ void prepareVoiceFrame( uint8_t * ambe72Data)
 {
 	memset(dmrData, 0, 53);
 
+	if (dmr_control.voiceHeaderSent == 0)
+	{
+		dmr_control.voiceHeaderSent = 1;
+		createVoiceHeader(settings.dmrId,
+						dmr_control.destination,
+						dmrData,
+						dmr_control.DMRSequence++,
+						dmr_control.streamId);
+
+		writeDMRQueue((uint8_t *) dmrData);
+		memset(dmrData, 0, 53);
+
+	}
+
 	createVoiceFrame(settings.dmrId,
 				dmr_control.destination,
 				dmrData,
@@ -777,18 +795,24 @@ void dmr_start_tx(void)
 	flushDMRQueue();
 
 	dmr_control.streamId = rand()+1;
-	dmr_control.voiceSequence=0;
-	dmr_control.DMRSequence=0;
+	dmr_control.voiceSequence = 0;
+	dmr_control.DMRSequence = 0;
 	dmr_control.destination = settings.currentTG;
 	dmr_control.dmr_status = DMR_STATUS_TX;
+	dmr_control.voiceHeaderSent = 0;
 
+	/*
 	createVoiceHeader(settings.dmrId,
 				dmr_control.destination,
 				dmrData,
 				dmr_control.DMRSequence++,
 				dmr_control.streamId);
-	//network_send(dmrData, 53);
+
 	writeDMRQueue((uint8_t *) dmrData);
+	*/
+
+	//send 2 voice headers?
+	//writeDMRQueue((uint8_t *) dmrData);
 }
 
 

@@ -57,7 +57,7 @@ void audioBufferWrite(const uint8_t *data, uint32_t size)
 			}
 			else {
 				memcpy(&audioBuffer[audioBufferWriteIndex], data, f1);
-				memcpy(&audioBuffer[0], data, size - f1);
+				memcpy(&audioBuffer[0], data + f1, size - f1);
 			}
 		}
 		else
@@ -373,6 +373,7 @@ void pa_record_stream_request_function(pa_stream *p, size_t nbytes, void *userda
 		}
 		else
 		{
+			//g_printf("len %d\n", len);
 			audioBufferWrite( data, (uint32_t) len);
 			pa_stream_drop(audio_record_stream);
 

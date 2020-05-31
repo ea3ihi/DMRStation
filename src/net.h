@@ -25,6 +25,7 @@ typedef struct dmr_control_struct {
 	DMRStatus_t dmr_status;
 	uint32_t lastSrc;
 	uint32_t lastDst;
+	uint8_t voiceHeaderSent;
 
 	GTimer			*timerTOT;
 } dmr_control_struct_t;
