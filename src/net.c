@@ -29,7 +29,7 @@ uint16_t timeoutInactivity;
 uint32_t salt;
 uint32_t ticks;
 
-dmr_control_struct_t dmr_control;
+volatile dmr_control_struct_t dmr_control;
 
 guint netTimeout;
 
@@ -527,6 +527,7 @@ void createVoiceHeader(uint32_t src, uint32_t dst, uint8_t *dataOut, uint8_t seq
 	// Encode the src and dst Ids etc
 	if (!DMRFullLC_encode(&lc, &dmrData[20], DT_VOICE_LC_HEADER)) // Encode the src and dst Ids etc
 	{
+		g_printf("Can not encode FLC!\n");
 		return;
 	}
 
@@ -780,8 +781,8 @@ void dmr_start_tx(void)
 	flushDMRQueue();
 
 	dmr_control.streamId = rand()+1;
-	dmr_control.voiceSequence=0;
-	dmr_control.DMRSequence=0;
+	dmr_control.voiceSequence = 0;
+	dmr_control.DMRSequence = 0;
 	dmr_control.destination = settings.currentTG;
 	dmr_control.dmr_status = DMR_STATUS_TX;
 
@@ -792,6 +793,9 @@ void dmr_start_tx(void)
 				dmr_control.streamId);
 	//network_send(dmrData, 53);
 	writeDMRQueue((uint8_t *) dmrData);
+
+	//send 2 voice headers?
+	//writeDMRQueue((uint8_t *) dmrData);
 }
 
 

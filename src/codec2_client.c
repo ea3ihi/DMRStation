@@ -6,9 +6,9 @@
 #define CODEC2_BUFFER_SIZE	7
 
 uint8_t codec2Buffer[CODEC2_BUFFERS][CODEC2_BUFFER_SIZE];
-uint8_t bufferReadIndex = 0;
-uint8_t bufferWriteIndex = 0;
-uint8_t bufferCount = 0;
+uint8_t codec2bufferReadIndex = 0;
+uint8_t codec2bufferWriteIndex = 0;
+uint8_t codec2bufferCount = 0;
 
 void addCodec2Buffer(uint8_t * dataIn);
 void readCodec2Buffer(uint8_t * dataOut);
@@ -89,13 +89,13 @@ bool codec2_send(const uint8_t * data, unsigned int length)
 
 void addCodec2Buffer(uint8_t * dataIn)
 {
-	memcpy(&codec2Buffer[bufferWriteIndex][0], dataIn, CODEC2_BUFFER_SIZE);
-	bufferCount++;
+	memcpy(&codec2Buffer[codec2bufferWriteIndex][0], dataIn, CODEC2_BUFFER_SIZE);
+	codec2bufferCount++;
 
-	bufferWriteIndex++;
-	bufferWriteIndex %= CODEC2_BUFFERS;
+	codec2bufferWriteIndex++;
+	codec2bufferWriteIndex %= CODEC2_BUFFERS;
 
-	if (bufferCount >=3) {
+	if (codec2bufferCount >=3) {
 		processCodec2Buffer();
 	}
 
@@ -103,10 +103,10 @@ void addCodec2Buffer(uint8_t * dataIn)
 
 void readCodec2Buffer(uint8_t * dataOut)
 {
-	memcpy(dataOut, &codec2Buffer[bufferReadIndex][0], CODEC2_BUFFER_SIZE);
-	bufferCount--;
-	bufferReadIndex++;
-	bufferReadIndex %= CODEC2_BUFFERS;
+	memcpy(dataOut, &codec2Buffer[codec2bufferReadIndex][0], CODEC2_BUFFER_SIZE);
+	codec2bufferCount--;
+	codec2bufferReadIndex++;
+	codec2bufferReadIndex %= CODEC2_BUFFERS;
 }
 
 void processCodec2Buffer()
