@@ -23,6 +23,7 @@ typedef struct AppSettingsStruct
 	uint8_t     callsign[CALLSIGN_LENGTH];
 	uint8_t     ambeServerHost[HOST_LENGTH];
 	uint16_t    ambeServerPort;
+	uint8_t		codec2Enabled;
 	uint8_t     codec2ServerHost[HOST_LENGTH];
 	uint16_t    codec2ServerPort;
 	uint8_t		smallUI;

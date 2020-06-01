@@ -31,6 +31,11 @@ GtkWidget       *buttonExit;
 GtkWidget       *buttonPTT;
 GtkWidget       *buttonLock;
 
+//settings tab
+GtkWidget       *buttonScanAudioDevices;
+GtkWidget       *dropdownAudioIn;
+GtkWidget       *dropdownAudioOut;
+GtkWidget       *switchCodec2;
 
 GtkWidget       *sliderVolume;
 
@@ -152,6 +157,20 @@ void onButtonLock(GtkToggleButton *togglebutton,
 	}
 }
 
+gboolean
+switchCodec2_active (GtkSwitch *widget,
+               gboolean   state,
+               gpointer   user_data)
+{
+    if (gtk_switch_get_active (widget)){
+        settings.codec2Enabled = 1;
+    }else{
+    	settings.codec2Enabled = 0;
+    }
+
+    return FALSE;
+}
+
 int main (int argc, char **argv)
 {
 
@@ -177,7 +196,7 @@ int main (int argc, char **argv)
 
 	ambeclient_init();
 	codec2client_init();
-	audio_init();
+
 	dmrids_init();
 	if (settings.pttEnabled == 1)
 	{
@@ -218,6 +237,11 @@ int main (int argc, char **argv)
 	treeLH = (GtkTreeView *) gtk_builder_get_object(builder, "treeLH");
 	notebook = (GtkNotebook *) gtk_builder_get_object(builder, "notebook1");
 
+	//settings tab
+	buttonScanAudioDevices = GTK_WIDGET(gtk_builder_get_object(builder, "buttonScanAudioDevices"));
+	switchCodec2 = GTK_WIDGET(gtk_builder_get_object(builder, "switchCodec2"));
+	dropdownAudioIn = GTK_WIDGET(gtk_builder_get_object(builder, "dropdownAudioIn"));
+	dropdownAudioOut = GTK_WIDGET(gtk_builder_get_object(builder, "dropdownAudioOut"));
 
 	if (settings.decorated == 1)
 	{
@@ -243,9 +267,13 @@ int main (int argc, char **argv)
 
 	g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 
+	g_signal_connect(switchCodec2, "state-set", G_CALLBACK(switchCodec2_active), NULL);
+
 	ui_net_connection(WAITING_LOGIN);
 	lastheard_init();
 	talkgroup_init();
+
+	audio_init();
 
 	ui_dmr_stop(settings.dmrId, settings.currentTG, 1);
 

@@ -11,7 +11,7 @@ uint8_t ambeBytes[7];
 char err_str[64];
 
 dmr_control_struct_t dmr_control;
-
+extern AppSettingsStruct_t settings;
 
 /**
  * Return DMR status
@@ -67,13 +67,15 @@ void processDMRVoiceFrame(uint8_t * data)
 			}
 		}
 
+		if (settings.codec2Enabled == 0)
+		{
+			ambe_send(ambeBytes, sizeof(ambeBytes));
+		}
+		else
+		{
+			codec2_send(ambeBytes, sizeof(ambeBytes));
+		}
 
-		//uint16_t *buffer = audio_get_buffer();
-
-		//ambeDecode(ambeBytes);
-		ambe_send(ambeBytes, sizeof(ambeBytes));
-		//HAL_Delay(9);
-		//audio_advance_buffer();
 	}
 
 }

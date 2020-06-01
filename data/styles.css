@@ -115,3 +115,15 @@ treeview.view header button {
 #mainW {
 	background-color: #FF00FF;
 }
+
+#fixedSettingsBox {
+	background: #BABABA;
+	}
+
+#switchCodec2:checked {
+	color: #00FF00;
+}
+
+#buttonScanAudioDevices {
+	font-size: 14px;
+}
