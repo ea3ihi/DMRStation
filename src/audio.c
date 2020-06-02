@@ -18,6 +18,8 @@
 
 #define AUDIO_TICK_INTERVAL	60	//ms
 
+#define MAX_DEVICES 20
+
 /* Private typedef -----------------------------------------------------------*/
 typedef enum {
   AUDIO_STATE_IDLE = 0,
@@ -40,6 +42,12 @@ volatile uint32_t audioBufferReadIndex;
 volatile uint32_t audioBufferWriteIndex;
 volatile uint32_t audioBufferCount;
 
+uint8_t updatingDevices = 0;
+
+uint8_t devicesIn[MAX_DEVICES];
+uint8_t devicesOut[MAX_DEVICES];
+uint8_t numDevicesIn = 0;
+uint8_t numDevicesOut = 0;
 
 void audioBufferFlush(void)
 {
@@ -263,6 +271,7 @@ void pa_sink_info_cb_func
 
 		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (dropdownAudioOut),
 		                           i->description);
+		devicesOut[numDevicesOut++] = i->index;
 	}
 }
 
@@ -271,13 +280,17 @@ void pa_source_info_cb_func
 {
 	if (i)
 	{
+
+		if (!strstr(i->description, "Monitor"))
+		{
 		g_print("Source %d: %s\n%s\n",i->index,  i->name, i->description);
 
-		//if (!strstr(i->description, "Monitor"))
-		//{
-			gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (dropdownAudioIn),
+
+		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (dropdownAudioIn),
 				                           i->description);
-		//}
+
+		devicesIn[numDevicesIn++] = i->index;
+		}
 	}
 }
 
@@ -312,7 +325,29 @@ void audio_deinit(void)
 	pa_glib_mainloop_free(pa_ml);
 }
 
+void scanAudioDevices(void)
+{
 
+	numDevicesIn = 0;
+	numDevicesOut = 0;
+	updatingDevices = 1;
+
+	gtk_combo_box_text_remove_all (GTK_COMBO_BOX_TEXT (dropdownAudioIn));
+
+	gtk_combo_box_text_remove_all (GTK_COMBO_BOX_TEXT (dropdownAudioOut));
+
+
+	pa_context_get_sink_info_list(ctxt,
+							pa_sink_info_cb_func,
+							NULL
+							);
+
+	pa_context_get_source_info_list(ctxt,
+							pa_source_info_cb_func,
+							NULL
+							);
+	updatingDevices = 0;
+}
 
 #ifdef ADJUST_LATENCY
 
@@ -437,15 +472,7 @@ void context_state_callback(pa_context *c, void *userdata) {
 		  case PA_CONTEXT_READY:
 			*pa_ready = 1;
 
-			pa_context_get_sink_info_list(ctxt,
-						pa_sink_info_cb_func,
-						NULL
-						);
-
-			pa_context_get_source_info_list(ctxt,
-									pa_source_info_cb_func,
-									NULL
-									);
+			scanAudioDevices();
 
 			audio_stream = pa_stream_new (ctxt, "DMROut", &ss, NULL);
 
@@ -568,5 +595,51 @@ void audio_record_stop(void)
 						);
 	}
 }
+
+
+void
+onAudioInChanged (GtkComboBox *widget,
+               gpointer     user_data)
+
+{
+
+	uint32_t streamIndex = pa_stream_get_index(audio_stream);
+	uint32_t idx = devicesOut[gtk_combo_box_get_active (widget)];
+
+	pa_context_move_source_output_by_index	(ctxt,
+		streamIndex,
+		idx,
+		NULL,
+		NULL
+		);
+
+	g_printf("Source %d move to %d\n", streamIndex, idx);
+}
+
+void
+onAudioOutChanged (GtkComboBox *widget,
+               gpointer     user_data)
+
+{
+
+	if (updatingDevices == 1)
+	{
+		return;
+	}
+
+	uint32_t streamIndex = pa_stream_get_index(audio_stream);
+	uint32_t idx = devicesOut[gtk_combo_box_get_active (widget)];
+
+	pa_context_move_sink_input_by_index	(ctxt,
+		streamIndex,
+		idx,
+		NULL,
+		NULL
+		);
+
+	g_printf("Sink %d move to %d\n", streamIndex, idx);
+
+}
+
 
 

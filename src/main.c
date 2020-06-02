@@ -33,7 +33,9 @@ GtkWidget       *buttonLock;
 
 //settings tab
 GtkWidget       *buttonScanAudioDevices;
+GtkWidget       *btnAudioIn;
 GtkWidget       *dropdownAudioIn;
+GtkWidget       *btnAudioOut;
 GtkWidget       *dropdownAudioOut;
 GtkWidget       *switchCodec2;
 
@@ -54,6 +56,27 @@ onVolumeChanged (GtkRange *range,
 	uint32_t v = (uint32_t) (65535 * value / 100);
 
 	setVolume(v);
+}
+
+void
+onButtonAudioInClick (GtkButton *button,
+               gpointer   user_data)
+{
+	gtk_combo_box_popup (GTK_COMBO_BOX(dropdownAudioIn));
+}
+
+void
+onButtonAudioOutClick (GtkButton *button,
+               gpointer   user_data)
+{
+	gtk_combo_box_popup (GTK_COMBO_BOX(dropdownAudioOut));
+}
+
+void
+onButtonScanAudioDevicesClick (GtkButton *button,
+               gpointer   user_data)
+{
+	scanAudioDevices();
 }
 
 void
@@ -240,7 +263,9 @@ int main (int argc, char **argv)
 	//settings tab
 	buttonScanAudioDevices = GTK_WIDGET(gtk_builder_get_object(builder, "buttonScanAudioDevices"));
 	switchCodec2 = GTK_WIDGET(gtk_builder_get_object(builder, "switchCodec2"));
+	btnAudioIn = GTK_WIDGET(gtk_builder_get_object(builder, "btnAudioIn"));
 	dropdownAudioIn = GTK_WIDGET(gtk_builder_get_object(builder, "dropdownAudioIn"));
+	btnAudioOut = GTK_WIDGET(gtk_builder_get_object(builder, "btnAudioOut"));
 	dropdownAudioOut = GTK_WIDGET(gtk_builder_get_object(builder, "dropdownAudioOut"));
 
 	if (settings.decorated == 1)
@@ -268,6 +293,12 @@ int main (int argc, char **argv)
 	g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 
 	g_signal_connect(switchCodec2, "state-set", G_CALLBACK(switchCodec2_active), NULL);
+
+	g_signal_connect(btnAudioIn, "clicked", G_CALLBACK(onButtonAudioInClick), NULL);
+	g_signal_connect(btnAudioOut, "clicked", G_CALLBACK(onButtonAudioOutClick), NULL);
+	g_signal_connect(buttonScanAudioDevices, "clicked", G_CALLBACK(onButtonScanAudioDevicesClick), NULL);
+	g_signal_connect(dropdownAudioIn, "changed", G_CALLBACK(onAudioInChanged), NULL);
+	g_signal_connect(dropdownAudioOut, "changed", G_CALLBACK(onAudioOutChanged), NULL);
 
 	ui_net_connection(WAITING_LOGIN);
 	lastheard_init();

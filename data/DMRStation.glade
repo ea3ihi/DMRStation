@@ -345,6 +345,7 @@ ABCDEFG</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="popup_fixed_width">False</property>
                       </object>
                       <packing>
                         <property name="x">10</property>
@@ -358,6 +359,39 @@ ABCDEFG</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="popup_fixed_width">False</property>
+                      </object>
+                      <packing>
+                        <property name="x">10</property>
+                        <property name="y">200</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btnAudioIn">
+                        <property name="label" translatable="yes"> </property>
+                        <property name="name">btnAudioIn</property>
+                        <property name="width_request">400</property>
+                        <property name="height_request">40</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="relief">none</property>
+                      </object>
+                      <packing>
+                        <property name="x">10</property>
+                        <property name="y">120</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btnAudioOut">
+                        <property name="label" translatable="yes"> </property>
+                        <property name="name">btnAudioOut</property>
+                        <property name="width_request">400</property>
+                        <property name="height_request">40</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="relief">none</property>
                       </object>
                       <packing>
                         <property name="x">10</property>

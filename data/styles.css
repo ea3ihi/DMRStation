@@ -127,3 +127,13 @@ treeview.view header button {
 #buttonScanAudioDevices {
 	font-size: 14px;
 }
+
+#btnAudioIn {
+	background: transparent;
+	opacity: 0;
+}
+
+#btnAudioOut {
+	background: transparent;
+	opacity: 0;
+}
