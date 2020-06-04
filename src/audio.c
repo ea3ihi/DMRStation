@@ -604,7 +604,7 @@ onAudioInChanged (GtkComboBox *widget,
 {
 
 	uint32_t streamIndex = pa_stream_get_index(audio_stream);
-	uint32_t idx = devicesOut[gtk_combo_box_get_active (widget)];
+	uint32_t idx = devicesIn[gtk_combo_box_get_active (widget)];
 
 	pa_context_move_source_output_by_index	(ctxt,
 		streamIndex,
