@@ -42,22 +42,22 @@ OBJS += \
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: resources DMRStation
+all: resources DMRstation
 
 resources:
 	glib-compile-resources --target=./src/resources.c --sourcedir=./data/ --generate data/resources.xml 
 
 
 # Tool invocations
-DMRStation: $(OBJS) $(USER_OBJS)
+DMRstation: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
-	gcc -L/usr/lib -o "DMRStation" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L/usr/lib -o "DMRstation" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) DMRStation
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) DMRstation
 	-@echo ' '
 
 .PHONY: all clean dependents

@@ -52,8 +52,6 @@ tg_selection_changed_cb (GtkTreeSelection *selection, gpointer data)
                 	activateTG(settings.dmrId, tg);
 
                 }
-
-                //g_free (tg);
         }
 }
 

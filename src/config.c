@@ -98,6 +98,12 @@ bool loadConfigFile(void)
 		settings.codec2ServerPort = atoi(val);
 	}
 
+	val = g_key_file_get_string (key_file, "codec2", "enabled", &error);
+	if (val != NULL)
+	{
+		settings.codec2Enabled = atoi(val);
+	}
+
 	val = g_key_file_get_string (key_file, "ui", "smallUI", &error);
 	if (val != NULL)
 	{
