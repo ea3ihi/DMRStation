@@ -10,6 +10,8 @@
   </object>
   <object class="GtkWindow" id="mainWindow">
     <property name="name">mainWindow</property>
+    <property name="width_request">480</property>
+    <property name="height_request">320</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">DMR Station</property>
     <property name="window_position">center</property>
@@ -22,9 +24,10 @@
     </child>
     <child>
       <object class="GtkBox">
+        <property name="width_request">480</property>
+        <property name="height_request">320</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="halign">end</property>
         <child>
           <object class="GtkNotebook" id="notebook1">
             <property name="width_request">430</property>
@@ -32,21 +35,23 @@
             <property name="can_focus">True</property>
             <child>
               <object class="GtkFixed" id="fixed3">
-                <property name="width_request">430</property>
+                <property name="name">mainW</property>
+                <property name="width_request">300</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkLabel" id="labelTG">
                     <property name="name">labelTG</property>
-                    <property name="width_request">410</property>
-                    <property name="height_request">50</property>
+                    <property name="width_request">300</property>
+                    <property name="height_request">40</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">TG123456</property>
                     <property name="justify">center</property>
                     <property name="single_line_mode">True</property>
+                    <property name="yalign">0.49000000953674316</property>
                     <attributes>
-                      <attribute name="font-desc" value="Sans Bold 30"/>
+                      <attribute name="font-desc" value="Sans 28"/>
                       <attribute name="weight" value="ultrabold"/>
                       <attribute name="foreground" value="#34336564a4a4"/>
                     </attributes>
@@ -55,18 +60,21 @@
                 <child>
                   <object class="GtkLabel" id="labelID">
                     <property name="name">labelID</property>
-                    <property name="width_request">410</property>
-                    <property name="height_request">30</property>
+                    <property name="width_request">300</property>
+                    <property name="height_request">80</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">1234567
 ABCDEFG</property>
+                    <property name="justify">center</property>
+                    <property name="wrap">True</property>
+                    <property name="ellipsize">end</property>
                     <attributes>
-                      <attribute name="font-desc" value="Sans Bold 24"/>
+                      <attribute name="font-desc" value="Sans Bold 20"/>
                     </attributes>
                   </object>
                   <packing>
-                    <property name="y">60</property>
+                    <property name="y">52</property>
                   </packing>
                 </child>
                 <child>
@@ -80,8 +88,8 @@ ABCDEFG</property>
                     <property name="receives_default">True</property>
                   </object>
                   <packing>
-                    <property name="x">290</property>
-                    <property name="y">230</property>
+                    <property name="x">196</property>
+                    <property name="y">187</property>
                   </packing>
                 </child>
                 <child>
@@ -89,15 +97,15 @@ ABCDEFG</property>
                     <property name="label" translatable="yes">4000</property>
                     <property name="name">button4000</property>
                     <property name="width_request">130</property>
-                    <property name="height_request">60</property>
+                    <property name="height_request">44</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <signal name="clicked" handler="onBtn4000Click" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="x">140</property>
-                    <property name="y">160</property>
+                    <property name="x">8</property>
+                    <property name="y">134</property>
                   </packing>
                 </child>
                 <child>
@@ -111,24 +119,24 @@ ABCDEFG</property>
                     <property name="receives_default">True</property>
                   </object>
                   <packing>
-                    <property name="x">20</property>
-                    <property name="y">155</property>
+                    <property name="x">11</property>
+                    <property name="y">181</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkLabel" id="labelTT">
                     <property name="name">labelTT</property>
-                    <property name="width_request">90</property>
-                    <property name="height_request">40</property>
+                    <property name="width_request">129</property>
+                    <property name="height_request">52</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">180</property>
+                    <property name="label" translatable="yes">00:00</property>
                     <attributes>
-                      <attribute name="font-desc" value="Sans Bold 24"/>
+                      <attribute name="font-desc" value="Sans Bold 26"/>
                     </attributes>
                   </object>
                   <packing>
-                    <property name="x">140</property>
-                    <property name="y">220</property>
+                    <property name="x">130</property>
+                    <property name="y">229</property>
                   </packing>
                 </child>
                 <child>
@@ -136,14 +144,14 @@ ABCDEFG</property>
                     <property name="label" translatable="yes">#</property>
                     <property name="name">buttonManualTG</property>
                     <property name="width_request">130</property>
-                    <property name="height_request">60</property>
+                    <property name="height_request">44</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                   </object>
                   <packing>
-                    <property name="x">280</property>
-                    <property name="y">160</property>
+                    <property name="x">160</property>
+                    <property name="y">134</property>
                   </packing>
                 </child>
                 <child>
@@ -151,25 +159,25 @@ ABCDEFG</property>
                     <property name="label" translatable="yes">L</property>
                     <property name="name">buttonLock</property>
                     <property name="width_request">50</property>
-                    <property name="height_request">36</property>
+                    <property name="height_request">40</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                   </object>
                   <packing>
-                    <property name="x">233</property>
-                    <property name="y">229</property>
+                    <property name="x">137</property>
+                    <property name="y">185</property>
                   </packing>
                 </child>
               </object>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="labelTabMain">
+              <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Main</property>
                 <attributes>
-                  <attribute name="font-desc" value="Sans 20"/>
+                  <attribute name="font-desc" value="Sans 16"/>
                 </attributes>
               </object>
               <packing>
@@ -206,7 +214,7 @@ ABCDEFG</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">TG</property>
                 <attributes>
-                  <attribute name="font-desc" value="Sans 20"/>
+                  <attribute name="font-desc" value="Sans 16"/>
                 </attributes>
               </object>
               <packing>
@@ -229,6 +237,7 @@ ABCDEFG</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="enable_search">False</property>
+                    <property name="show_expanders">False</property>
                     <property name="enable_grid_lines">horizontal</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection"/>
@@ -246,7 +255,7 @@ ABCDEFG</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">LH</property>
                 <attributes>
-                  <attribute name="font-desc" value="Sans 20"/>
+                  <attribute name="font-desc" value="Sans 16"/>
                 </attributes>
               </object>
               <packing>
@@ -273,13 +282,12 @@ ABCDEFG</property>
                         <property name="can_focus">True</property>
                       </object>
                       <packing>
-                        <property name="x">10</property>
-                        <property name="y">20</property>
+                        <property name="y">1</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="width_request">190</property>
+                        <property name="width_request">243</property>
                         <property name="height_request">30</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -289,8 +297,8 @@ ABCDEFG</property>
                         </attributes>
                       </object>
                       <packing>
-                        <property name="x">130</property>
-                        <property name="y">30</property>
+                        <property name="x">112</property>
+                        <property name="y">11</property>
                       </packing>
                     </child>
                     <child>
@@ -307,8 +315,8 @@ ABCDEFG</property>
                         </attributes>
                       </object>
                       <packing>
-                        <property name="x">10</property>
-                        <property name="y">90</property>
+                        <property name="x">5</property>
+                        <property name="y">58</property>
                       </packing>
                     </child>
                     <child>
@@ -325,8 +333,8 @@ ABCDEFG</property>
                         </attributes>
                       </object>
                       <packing>
-                        <property name="x">10</property>
-                        <property name="y">170</property>
+                        <property name="x">4</property>
+                        <property name="y">132</property>
                       </packing>
                     </child>
                     <child>
@@ -340,8 +348,8 @@ ABCDEFG</property>
                         <property name="receives_default">True</property>
                       </object>
                       <packing>
-                        <property name="x">10</property>
-                        <property name="y">250</property>
+                        <property name="x">4</property>
+                        <property name="y">205</property>
                       </packing>
                     </child>
                     <child>
@@ -354,8 +362,8 @@ ABCDEFG</property>
                         <property name="popup_fixed_width">False</property>
                       </object>
                       <packing>
-                        <property name="x">10</property>
-                        <property name="y">120</property>
+                        <property name="x">4</property>
+                        <property name="y">90</property>
                       </packing>
                     </child>
                     <child>
@@ -368,8 +376,8 @@ ABCDEFG</property>
                         <property name="popup_fixed_width">False</property>
                       </object>
                       <packing>
-                        <property name="x">10</property>
-                        <property name="y">200</property>
+                        <property name="x">4</property>
+                        <property name="y">160</property>
                       </packing>
                     </child>
                     <child>
@@ -384,8 +392,8 @@ ABCDEFG</property>
                         <property name="relief">none</property>
                       </object>
                       <packing>
-                        <property name="x">10</property>
-                        <property name="y">120</property>
+                        <property name="x">4</property>
+                        <property name="y">90</property>
                       </packing>
                     </child>
                     <child>
@@ -400,15 +408,15 @@ ABCDEFG</property>
                         <property name="relief">none</property>
                       </object>
                       <packing>
-                        <property name="x">10</property>
-                        <property name="y">200</property>
+                        <property name="x">4</property>
+                        <property name="y">160</property>
                       </packing>
                     </child>
                   </object>
                 </child>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child type="tab">
@@ -417,11 +425,11 @@ ABCDEFG</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Set</property>
                 <attributes>
-                  <attribute name="font-desc" value="Sans 20"/>
+                  <attribute name="font-desc" value="Sans 16"/>
                 </attributes>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -439,11 +447,13 @@ ABCDEFG</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">DMR Station
 By EA3IHI
-v0.9 2020/05/31</property>
+
+2020/05/31
+Version 0.9</property>
                     <property name="wrap">True</property>
                     <property name="track_visited_links">False</property>
                     <attributes>
-                      <attribute name="font-desc" value="Sans 26"/>
+                      <attribute name="font-desc" value="Sans 24"/>
                     </attributes>
                   </object>
                   <packing>
@@ -469,7 +479,7 @@ v0.9 2020/05/31</property>
                 </child>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child type="tab">
@@ -478,11 +488,11 @@ v0.9 2020/05/31</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Info</property>
                 <attributes>
-                  <attribute name="font-desc" value="Sans 20"/>
+                  <attribute name="font-desc" value="Sans 16"/>
                 </attributes>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">4</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -496,7 +506,8 @@ v0.9 2020/05/31</property>
         <child>
           <object class="GtkScale" id="sliderVolume">
             <property name="name">sliderVolume</property>
-            <property name="width_request">50</property>
+            <property name="width_request">70</property>
+            <property name="height_request">320</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="margin_top">20</property>
