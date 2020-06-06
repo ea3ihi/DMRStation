@@ -159,7 +159,7 @@ ABCDEFG</property>
                     <property name="label" translatable="yes">L</property>
                     <property name="name">buttonLock</property>
                     <property name="width_request">50</property>
-                    <property name="height_request">40</property>
+                    <property name="height_request">46</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>

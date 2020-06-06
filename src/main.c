@@ -167,7 +167,10 @@ void onButtonLock(GtkToggleButton *togglebutton,
 		gtk_widget_set_sensitive (buttonPTT, FALSE);
 		gtk_widget_set_sensitive (button4000, FALSE);
 		gtk_widget_set_sensitive (sliderVolume, FALSE);
-		gtk_widget_set_sensitive (GTK_WIDGET(notebook), FALSE);
+		if (settings.smallUI == 0)
+		{
+			gtk_widget_set_sensitive (GTK_WIDGET(notebook), FALSE);
+		}
 
 	}
 	else
@@ -175,7 +178,10 @@ void onButtonLock(GtkToggleButton *togglebutton,
 		gtk_widget_set_sensitive (buttonPTT, TRUE);
 		gtk_widget_set_sensitive (button4000, TRUE);
 		gtk_widget_set_sensitive (sliderVolume, TRUE);
-		gtk_widget_set_sensitive (GTK_WIDGET(notebook), TRUE);
+		if (settings.smallUI == 0)
+		{
+			gtk_widget_set_sensitive (GTK_WIDGET(notebook), TRUE);
+		}
 
 	}
 }
