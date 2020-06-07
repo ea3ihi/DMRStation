@@ -27,6 +27,7 @@ OBJS += \
 
 OBJS += \
 ./src/ambe_client.o \
+./src/codec2_client.o \
 ./src/audio.o \
 ./src/config.o \
 ./src/dmr.o \
