@@ -5,11 +5,12 @@ RM := rm -rf
 CC = gcc
 
 OBJ_DIR = Obj
-CFLAGS = -Wall -g -o `pkg-config --cflags gtk+-3.0 libcrypto`
-PACKAGE = `pkg-config --cflags --libs gtk+-3.0 libcrypto`
-LIBS = `pkg-config --libs gtk+-3.0 libcrypto` -lpulse -lpulse-mainloop-glib
-LDFLAGS=`pkg-config --libs gtk+-3.0`
+CFLAGS = -Wall -g -o $(shell pkg-config --cflags gtk+-3.0 glib-2.0)
+LIBS = $(shell pkg-config --libs gtk+-3.0 glib-2.0 ) 
+LIBS+= -lpulse -lpulse-mainloop-glib -lssl -lcrypto
+LDFLAGS = $(shell pkg-config --libs gtk+-3.0 glib-2.0)
 PULSE_LIBS = -lpulse
+
 
 OBJS += \
 ./src/dmr/BPTC19696.o \
