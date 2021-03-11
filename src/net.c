@@ -376,7 +376,7 @@ bool writeConfig(void)
 
 	sprintf( (char *) buffer + 8U, (char *) "%-8.8s%09u%09u%02u%02u%8.8s%9.9s%03d%-20.20s%-19.19s%c%-124.124s%-40.40s%-40.40s",
 		settings.callsign,
-		449000000, 444000000, power,
+		430812500, 430812500, power,
 		1, latitude, longitude, height, "Earth",
 		"DMRStation", slots, "github.com/ea3ihi", "20200430", software);
 
