@@ -153,6 +153,26 @@ bool loadConfigFile(void)
 		settings.pttInvert = atoi(val);
 	}
 
+	//gpio
+
+	val = g_key_file_get_string (key_file, "gpio", "gpioBank", &error);
+	if (val != NULL)
+	{
+		g_snprintf((gchar *) settings.gpioBank, GPIO_BANK_LENGTH, "%s", val);
+	}
+
+	val = g_key_file_get_string (key_file, "gpio", "gpioConnectedPort", &error);
+	if (val != NULL)
+	{
+		settings.gpioConnectedPort = atoi(val);
+	}
+
+	val = g_key_file_get_string (key_file, "gpio", "gpioEnabled", &error);
+	if (val != NULL)
+	{
+		settings.gpioEnabled = atoi(val);
+	}
+
 
 return true;
 }
@@ -169,6 +189,7 @@ void setDefaultSettings(void)
 	settings.pttInvert = 0;
 	settings.currentTGPrivate = 0;
 	settings.decorated = 0;
+	settings.gpioEnabled = 0;
 
 	if(loadConfigFile())
 	{
@@ -177,10 +198,10 @@ void setDefaultSettings(void)
 
 	//Default config
 	settings.magicNumber = SETTINGS_MAGIC_NUMBER;
-	settings.dmrId = 2143814;
-	settings.repeaterId = 214381466;
+	settings.dmrId = 123456;
+	settings.repeaterId = 123456788;
 	settings.remotePort = 62031;
-	settings.initialTG = 21460;
+	settings.initialTG = 91;
 
 
 	//local

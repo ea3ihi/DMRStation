@@ -28,6 +28,7 @@
 #include "talkgroup.h"
 #include "dmrids.h"
 #include "ptt.h"
+#include "gpio.h"
 
 void ui_dmr_start(uint32_t src, uint32_t dst, uint8_t type);
 void ui_dmr_stop(uint32_t src, uint32_t dst, uint8_t type);

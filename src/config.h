@@ -8,6 +8,7 @@
 #define HOST_LENGTH 16
 #define CALLSIGN_LENGTH 10
 #define PTT_BANK_LENGTH 10
+#define GPIO_BANK_LENGTH 10
 
 typedef struct AppSettingsStruct
 {
@@ -34,6 +35,11 @@ typedef struct AppSettingsStruct
 	uint8_t		pttPort;
 	uint8_t		pttEnabled;
 	uint8_t		pttInvert;
+
+	uint8_t     gpioBank[GPIO_BANK_LENGTH];
+	uint8_t		gpioConnectedPort;
+	uint8_t		gpioEnabled;
+
 } AppSettingsStruct_t;
 
 

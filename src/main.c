@@ -232,6 +232,11 @@ int main (int argc, char **argv)
 		ptt_init();
 	}
 
+	if (settings.gpioEnabled == 1)
+	{
+		gpio_init();
+	}
+
 	GError * error = NULL;
 
 	builder = gtk_builder_new();
@@ -412,12 +417,14 @@ void ui_net_connection(uint8_t status)
 			gtk_style_context_remove_class(context, "greenbg");
 			gtk_style_context_add_class(context, "redbg");
 			gtk_widget_hide(GTK_WIDGET(buttonPTT));
+			gpio_connected(0);
 			break;
 	case WAITING_CONNECT:
 			g_snprintf(str, 20, "Reconnecting...");
 			gtk_style_context_remove_class(context, "greenbg");
 			gtk_style_context_add_class(context, "redbg");
 			gtk_widget_hide(GTK_WIDGET(buttonPTT));
+			gpio_connected(0);
 			break;
 	case WAITING_AUTHORISATION:
 			break;
@@ -429,6 +436,7 @@ void ui_net_connection(uint8_t status)
 				gtk_style_context_add_class(context,"greenbg");
 
 				gtk_widget_show(GTK_WIDGET(buttonPTT));
+				gpio_connected(255);
 			break;
 	default:
 			return;
