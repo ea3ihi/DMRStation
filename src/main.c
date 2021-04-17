@@ -21,6 +21,7 @@
 extern AppSettingsStruct_t settings;
 
 
+
 GtkWidget       *labelTG;
 GtkWidget       *labelID;
 GtkWidget       *labelTT;
@@ -218,6 +219,7 @@ int main (int argc, char **argv)
 	g_setenv("PULSE_PROP_media.role", "phone", TRUE);
 
 	setDefaultSettings();
+	gpio_connected(GPIO_DISCONNECTED_SIGNAL);
 
 	dmr_control.timerTOT = g_timer_new();
 
@@ -417,14 +419,14 @@ void ui_net_connection(uint8_t status)
 			gtk_style_context_remove_class(context, "greenbg");
 			gtk_style_context_add_class(context, "redbg");
 			gtk_widget_hide(GTK_WIDGET(buttonPTT));
-			gpio_connected(0);
+			gpio_connected(GPIO_DISCONNECTED_SIGNAL);
 			break;
 	case WAITING_CONNECT:
 			g_snprintf(str, 20, "Reconnecting...");
 			gtk_style_context_remove_class(context, "greenbg");
 			gtk_style_context_add_class(context, "redbg");
 			gtk_widget_hide(GTK_WIDGET(buttonPTT));
-			gpio_connected(0);
+			gpio_connected(GPIO_CONNECTED_SIGNAL);
 			break;
 	case WAITING_AUTHORISATION:
 			break;
@@ -436,7 +438,7 @@ void ui_net_connection(uint8_t status)
 				gtk_style_context_add_class(context,"greenbg");
 
 				gtk_widget_show(GTK_WIDGET(buttonPTT));
-				gpio_connected(255);
+				gpio_connected(GPIO_DISCONNECTED_SIGNAL);
 			break;
 	default:
 			return;
