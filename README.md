@@ -1,6 +1,6 @@
 # DMRStation source code
 
-A free and open source DMR network radio by EA3IHI. You can find mode in http://dmrstation.com
+A free and open source DMR network radio by EA3IHI. You can find mode in http://dmrstation.ea3ihi.es
 
 ## Notes
 
